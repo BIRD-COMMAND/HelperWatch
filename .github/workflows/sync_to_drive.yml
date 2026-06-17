@@ -7,34 +7,24 @@ on:
     paths:
       - 'docs/**'
 
+# Resolves the Node migration by explicitly preparing the runner environment
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. Pull down the repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Provision Pandoc and Python inside the runner environment
       - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y pandoc
           pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
-      # 3. Convert local Markdown and its image assets into clean Word files
-      - name: Compile Markdown Assets to Structured OpenXML
-        run: |
-          mkdir -p staging
-          for file in docs/*.md; do
-            filename=$(basename "$file" .md)
-            echo "Compiling $filename..."
-            pandoc "$file" --resource-path=docs -o "staging/${filename}.docx"
-          done
-
-      # 4. Use Google's official Python SDK to upload and convert directly.
-      #    This script automatically handles both raw JSON keys and Base64 encoded keys.
-      - name: Deploy via Official Google Drive API
+      - name: Execute Robust Sync Engine
         env:
           GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
@@ -43,52 +33,105 @@ jobs:
           import os
           import json
           import base64
+          import subprocess
           from google.oauth2 import service_account
           from googleapiclient.discovery import build
           from googleapiclient.http import MediaFileUpload
 
-          # Securely load credentials from environment memory
+          print("=== Phase 1: Validating Directory and Environment ===")
+          docs_dir = 'docs'
+          if not os.path.exists(docs_dir):
+              print(f"Error: Target directory '{docs_dir}' does not exist in repository root.")
+              exit(1)
+
+          os.makedirs('staging', exist_ok=True)
+
+          print("=== Phase 2: Compiling Markdown via Pandoc ===")
+          found_files = False
+          # Walk through the docs folder recursively to capture nested files cleanly
+          for root, dirs, files in os.walk(docs_dir):
+              for file in files:
+                  if file.lower().endswith('.md'):
+                      found_files = True
+                      md_path = os.path.join(root, file)
+                      filename_no_ext = os.path.splitext(file)[0]
+                      docx_path = os.path.join('staging', f"{filename_no_ext}.docx")
+                      
+                      print(f"Compiling asset: {md_path}")
+                      try:
+                          subprocess.run(
+                              ['pandoc', md_path, '--resource-path', root, '-o', docx_path],
+                              check=True, capture_output=True, text=True
+                          )
+                      except subprocess.CalledProcessError as e:
+                          print(f"Pandoc Fatal Error on {file}: {e.stderr}")
+                          exit(1)
+
+          if not found_files:
+              print("Execution Halted: No markdown (.md) files found inside the /docs/ folder tree.")
+              exit(1)
+
+          print("=== Phase 3: Parsing Authentication Credentials ===")
+          if 'GDRIVE_CREDENTIALS' not in os.environ or 'GDRIVE_FOLDER_ID' not in os.environ:
+              print("Authentication Error: GitHub repository secrets are completely missing from environment context.")
+              exit(1)
+
           creds_raw = os.environ['GDRIVE_CREDENTIALS'].strip()
           try:
               creds_data = json.loads(creds_raw)
+              print("Successfully loaded plain text JSON credentials.")
           except json.JSONDecodeError:
-              creds_data = json.loads(base64.b64decode(creds_raw).decode('utf-8'))
+              try:
+                  decoded = base64.b64decode(creds_raw).decode('utf-8')
+                  creds_data = json.loads(decoded)
+                  print("Successfully decoded and loaded Base64 credentials.")
+              except Exception as e:
+                  print(f"Parser Error: GDRIVE_CREDENTIALS string is neither valid raw JSON nor valid Base64. Internal trace: {e}")
+                  exit(1)
 
-          # Initialize official authenticated Drive client
-          creds = service_account.Credentials.from_service_account_info(
-              creds_data, 
-              scopes=['https://www.googleapis.com/auth/drive']
-          )
-          service = build('drive', 'v3', credentials=creds)
+          try:
+              creds = service_account.Credentials.from_service_account_info(
+                  creds_data, scopes=['https://www.googleapis.com/auth/drive']
+              )
+              service = build('drive', 'v3', credentials=creds)
+              print("Official Google API Auth Token verified and client initialized.")
+          except Exception as e:
+              print(f"Google SDK Authorization Failure: {e}")
+              exit(1)
+
+          print("=== Phase 4: Deploying Assets to Google Ingestion Engine ===")
           folder_id = os.environ['GDRIVE_FOLDER_ID']
 
-          # Process and push all generated files
           for filename in os.listdir('staging'):
               if filename.endswith('.docx'):
                   file_path = os.path.join('staging', filename)
                   doc_title = os.path.splitext(filename)[0]
                   
-                  # Look for an existing live document with the exact same name
-                  query = f"name = '{doc_title}' and '{folder_id}' in parents and mimeType = 'application/vnd.google-apps.document' and trashed = false"
-                  results = service.files().list(q=query, fields="files(id)").execute()
-                  existing_files = results.get('files', [])
-                  
-                  # Package the compiled OpenXML bundle for deployment
-                  media = MediaFileUpload(
-                      file_path, 
-                      mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                      resumable=True
-                  )
-                  
-                  if existing_files:
-                      file_id = existing_files[0]['id']
-                      print(f"Updating content for existing Google Doc: '{doc_title}' ({file_id})")
-                      service.files().update(fileId=file_id, media_body=media).execute()
-                  else:
-                      print(f"Creating brand new Google Doc: '{doc_title}'")
-                      metadata = {
-                          'name': doc_title,
-                          'mimeType': 'application/vnd.google-apps.document',
-                          'parents': [folder_id]
-                      }
-                      service.files().create(body=metadata, media_body=media).execute()
+                  try:
+                      query = f"name = '{doc_title}' and '{folder_id}' in parents and mimeType = 'application/vnd.google-apps.document' and trashed = false"
+                      results = service.files().list(q=query, fields="files(id)").execute()
+                      existing_files = results.get('files', [])
+                      
+                      media = MediaFileUpload(
+                          file_path, 
+                          mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                          resumable=True
+                      )
+                      
+                      if existing_files:
+                          file_id = existing_files[0]['id']
+                          print(f"-> Overwriting content for existing Doc: '{doc_title}' (ID: {file_id})")
+                          service.files().update(fileId=file_id, media_body=media).execute()
+                      else:
+                          print(f"-> Creating brand new Google Doc on server: '{doc_title}'")
+                          metadata = {
+                              'name': doc_title,
+                              'mimeType': 'application/vnd.google-apps.document',
+                              'parents': [folder_id]
+                              }
+                          service.files().create(body=metadata, media_body=media).execute()
+                  except Exception as e:
+                      print(f"Google Drive API Transaction Error on file '{filename}': {e}")
+                      exit(1)
+
+          print("=== Pipeline Execution Successfully Finished! ===")
