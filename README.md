@@ -1,0 +1,1 @@
+### The project aims to create a wearable "cognitive prosthetic" that provides real-time, location-aware verbal cues and behavioral monitoring for children requiring near-constant executive function support. By leveraging mature, affordable wearables and local AI processing, we hope to help these families by reducing the burden of constant monitoring.
