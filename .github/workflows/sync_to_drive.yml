@@ -7,7 +7,6 @@ on:
     paths:
       - 'docs/**'
 
-# Resolves the Node migration by explicitly preparing the runner environment
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -26,29 +25,28 @@ jobs:
 
       - name: Execute Robust Sync Engine
         env:
-          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_CLIENT_ID: ${{ secrets.GDRIVE_CLIENT_ID }}
+          GDRIVE_CLIENT_SECRET: ${{ secrets.GDRIVE_CLIENT_SECRET }}
+          GDRIVE_REFRESH_TOKEN: ${{ secrets.GDRIVE_REFRESH_TOKEN }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
         shell: python
         run: |
           import os
-          import json
-          import base64
           import subprocess
-          from google.oauth2 import service_account
+          from google.oauth2.credentials import Credentials
           from googleapiclient.discovery import build
           from googleapiclient.http import MediaFileUpload
 
           print("=== Phase 1: Validating Directory and Environment ===")
           docs_dir = 'docs'
           if not os.path.exists(docs_dir):
-              print(f"Error: Target directory '{docs_dir}' does not exist in repository root.")
+              print(f"Error: Target directory '{docs_dir}' does not exist.")
               exit(1)
 
           os.makedirs('staging', exist_ok=True)
 
           print("=== Phase 2: Compiling Markdown via Pandoc ===")
           found_files = False
-          # Walk through the docs folder recursively to capture nested files cleanly
           for root, dirs, files in os.walk(docs_dir):
               for file in files:
                   if file.lower().endswith('.md'):
@@ -68,35 +66,23 @@ jobs:
                           exit(1)
 
           if not found_files:
-              print("Execution Halted: No markdown (.md) files found inside the /docs/ folder tree.")
+              print("Execution Halted: No markdown files found.")
               exit(1)
 
-          print("=== Phase 3: Parsing Authentication Credentials ===")
-          if 'GDRIVE_CREDENTIALS' not in os.environ or 'GDRIVE_FOLDER_ID' not in os.environ:
-              print("Authentication Error: GitHub repository secrets are completely missing from environment context.")
-              exit(1)
-
-          creds_raw = os.environ['GDRIVE_CREDENTIALS'].strip()
+          print("=== Phase 3: Initializing User Account Identity ===")
           try:
-              creds_data = json.loads(creds_raw)
-              print("Successfully loaded plain text JSON credentials.")
-          except json.JSONDecodeError:
-              try:
-                  decoded = base64.b64decode(creds_raw).decode('utf-8')
-                  creds_data = json.loads(decoded)
-                  print("Successfully decoded and loaded Base64 credentials.")
-              except Exception as e:
-                  print(f"Parser Error: GDRIVE_CREDENTIALS string is neither valid raw JSON nor valid Base64. Internal trace: {e}")
-                  exit(1)
-
-          try:
-              creds = service_account.Credentials.from_service_account_info(
-                  creds_data, scopes=['https://www.googleapis.com/auth/drive']
+              # Authenticate directly using your own 5 TB storage profile profile
+              creds = Credentials(
+                  token=None,
+                  refresh_token=os.environ['GDRIVE_REFRESH_TOKEN'],
+                  client_id=os.environ['GDRIVE_CLIENT_ID'],
+                  client_secret=os.environ['GDRIVE_CLIENT_SECRET'],
+                  token_uri="https://oauth2.googleapis.com/token"
               )
               service = build('drive', 'v3', credentials=creds)
-              print("Official Google API Auth Token verified and client initialized.")
+              print("User Account Session actively bound to pipeline client.")
           except Exception as e:
-              print(f"Google SDK Authorization Failure: {e}")
+              print(f"OAuth2 Identity Authorization Failure: {e}")
               exit(1)
 
           print("=== Phase 4: Deploying Assets to Google Ingestion Engine ===")
@@ -120,7 +106,7 @@ jobs:
                       
                       if existing_files:
                           file_id = existing_files[0]['id']
-                          print(f"-> Overwriting content for existing Doc: '{doc_title}' (ID: {file_id})")
+                          print(f"-> Safely overwriting data inside active Doc: '{doc_title}' (ID: {file_id})")
                           service.files().update(fileId=file_id, media_body=media).execute()
                       else:
                           print(f"-> Creating brand new Google Doc on server: '{doc_title}'")
@@ -128,7 +114,7 @@ jobs:
                               'name': doc_title,
                               'mimeType': 'application/vnd.google-apps.document',
                               'parents': [folder_id]
-                              }
+                          }
                           service.files().create(body=metadata, media_body=media).execute()
                   except Exception as e:
                       print(f"Google Drive API Transaction Error on file '{filename}': {e}")
