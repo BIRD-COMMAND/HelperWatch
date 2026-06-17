@@ -1,0 +1,45 @@
+name: Production Docs to Google Workspace Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**' # Triggers only when changes occur inside the docs folder
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Pull the latest markdown and image assets from git memory
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Provision Pandoc locally inside the GitHub Actions runner environment
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
+      # Step 3: Run a shell script to catch all changed or existing markdown files,
+      #         and process them with Pandoc. The --resource-path flag guarantees
+      #         that Pandoc finds the local 'images' directory and embeds those files inside the docx.
+      - name: Compile Markdown Assets to Structured OpenXML
+        run: |
+          mkdir -p staging
+          for file in docs/*.md; do
+            filename=$(basename "$file" .md)
+            echo "Compiling $filename..."
+            pandoc "$file" --resource-path=docs -o "staging/${filename}.docx"
+          done
+
+      # Step 4: Transfer files to Google Drive, setting flags to overwrite older versions
+      #         and immediately process them into native cloud formatting.
+      - name: Deploy to Google Ingestion Engine
+        uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.3.4
+        with:
+          target: "staging/*.docx"
+          credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
+          parent_folder_id: ${{ secrets.GDRIVE_FOLDER_ID }}
+          convert_files: true  # Forces Google's engine to switch .docx into a live Google Doc
+          override: true       # Replaces matching files cleanly, preserving the same share links and comments
