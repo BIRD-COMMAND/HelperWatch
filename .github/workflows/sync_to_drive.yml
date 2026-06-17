@@ -5,25 +5,24 @@ on:
     branches:
       - main
     paths:
-      - 'docs/**' # Triggers only when changes occur inside the docs folder
+      - 'docs/**'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Pull the latest markdown and image assets from git memory
+      # 1. Pull down the repository code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Provision Pandoc locally inside the GitHub Actions runner environment
+      # 2. Provision Pandoc and Python inside the runner environment
       - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y pandoc
+          pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
-      # Step 3: Run a shell script to catch all changed or existing markdown files,
-      #         and process them with Pandoc. The --resource-path flag guarantees
-      #         that Pandoc finds the local 'images' directory and embeds those files inside the docx.
+      # 3. Convert local Markdown and its image assets into clean Word files
       - name: Compile Markdown Assets to Structured OpenXML
         run: |
           mkdir -p staging
@@ -33,13 +32,63 @@ jobs:
             pandoc "$file" --resource-path=docs -o "staging/${filename}.docx"
           done
 
-      # Step 4: Transfer files to Google Drive, setting flags to overwrite older versions
-      #         and immediately process them into native cloud formatting.
-      - name: Deploy to Google Ingestion Engine
-        uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v2.3.4
-        with:
-          target: "staging/*.docx"
-          credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
-          parent_folder_id: ${{ secrets.GDRIVE_FOLDER_ID }}
-          convert_files: true  # Forces Google's engine to switch .docx into a live Google Doc
-          override: true       # Replaces matching files cleanly, preserving the same share links and comments
+      # 4. Use Google's official Python SDK to upload and convert directly.
+      #    This script automatically handles both raw JSON keys and Base64 encoded keys.
+      - name: Deploy via Official Google Drive API
+        env:
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        shell: python
+        run: |
+          import os
+          import json
+          import base64
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+          from googleapiclient.http import MediaFileUpload
+
+          # Securely load credentials from environment memory
+          creds_raw = os.environ['GDRIVE_CREDENTIALS'].strip()
+          try:
+              creds_data = json.loads(creds_raw)
+          except json.JSONDecodeError:
+              creds_data = json.loads(base64.b64decode(creds_raw).decode('utf-8'))
+
+          # Initialize official authenticated Drive client
+          creds = service_account.Credentials.from_service_account_info(
+              creds_data, 
+              scopes=['https://www.googleapis.com/auth/drive']
+          )
+          service = build('drive', 'v3', credentials=creds)
+          folder_id = os.environ['GDRIVE_FOLDER_ID']
+
+          # Process and push all generated files
+          for filename in os.listdir('staging'):
+              if filename.endswith('.docx'):
+                  file_path = os.path.join('staging', filename)
+                  doc_title = os.path.splitext(filename)[0]
+                  
+                  # Look for an existing live document with the exact same name
+                  query = f"name = '{doc_title}' and '{folder_id}' in parents and mimeType = 'application/vnd.google-apps.document' and trashed = false"
+                  results = service.files().list(q=query, fields="files(id)").execute()
+                  existing_files = results.get('files', [])
+                  
+                  # Package the compiled OpenXML bundle for deployment
+                  media = MediaFileUpload(
+                      file_path, 
+                      mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                      resumable=True
+                  )
+                  
+                  if existing_files:
+                      file_id = existing_files[0]['id']
+                      print(f"Updating content for existing Google Doc: '{doc_title}' ({file_id})")
+                      service.files().update(fileId=file_id, media_body=media).execute()
+                  else:
+                      print(f"Creating brand new Google Doc: '{doc_title}'")
+                      metadata = {
+                          'name': doc_title,
+                          'mimeType': 'application/vnd.google-apps.document',
+                          'parents': [folder_id]
+                      }
+                      service.files().create(body=metadata, media_body=media).execute()
