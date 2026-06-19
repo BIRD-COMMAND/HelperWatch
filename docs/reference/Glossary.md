@@ -44,7 +44,7 @@ The principle that all sensitive data (audio, biometrics) must be processed on t
 A one-tap card in the caregiver mobile app that switches the AI's entire behavior profile — adjusting prompt frequency, biometric thresholds, and active scripts — to match a specific scenario (bedtime, leaving the house, cool-down).
 
 **mDNS (Multicast DNS)**
-A zero-configuration networking protocol that allows devices on the same local network to discover each other by name (e.g., `helperwatch.local`) without manual IP configuration. Used by the mobile app and watch to find the local server hub.
+A zero-configuration networking protocol that allows devices on the same local network to discover each other by name (e.g., `helperwatch.local`) without manual IP configuration. Used as the primary discovery mechanism for the mobile app and watch to find the local server hub. Note: mDNS is unreliable on Android and WearOS due to hardcoded DNS servers and multicast limitations; fallback mechanisms (UDP broadcast, QR code, manual IP) are required.
 
 **Meltdown Intercept**
 The system's ability to detect early warning signs of emotional dysregulation (biometric spikes, pacing, vocal changes) and intervene with calming cues before a full meltdown manifests.
@@ -56,7 +56,7 @@ Brief, immediate positive reinforcement delivered by the AI after the child comp
 A lightweight messaging protocol designed for constrained devices and low-bandwidth networks. A candidate protocol for communication between the watch and the local server.
 
 **Ollama**
-An open-source tool for running large language models locally. Used by the HelperWatch server hub to host the AI model that generates verbal cues.
+An open-source tool for running large language models locally. Managed by the HelperWatch server hub as an external service — the app checks for it at launch, installs it if absent, and starts it as a background process. Model files range from ~1GB (1.5B parameters) to ~4.5GB (8B parameters).
 
 **Privacy Zone**
 A caregiver-configured room or time window where audio capture is automatically paused on the watch, protecting bystander privacy during sensitive situations.

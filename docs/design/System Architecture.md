@@ -10,8 +10,8 @@ HelperWatch is a three-component system connected over a local home Wi-Fi networ
 │                                                                     │
 │  ┌──────────────────┐    ┌──────────────────┐    ┌────────────────┐ │
 │  │   Wearable App   │    │ Local Server Hub │    │ Caregiver App  │ │
-│  │  (Android/WearOS │◄──►│ (Desktop App:    │◄──►│ (React Native  │ │
-│  │   Smartwatch)    │    │  Windows / Mac)  │    │  Mobile App)   │ │
+│  │  (Native Kotlin  │◄──►│ (Desktop App:    │◄──►│ (React Native  │ │
+│  │   WearOS)        │    │  Windows / Mac)  │    │  Mobile App)   │ │
 │  └──────────────────┘    └──────────────────┘    └────────────────┘ │
 │          ▲                        ▲                                  │
 │          │ BLE                    │ Optional                        │
@@ -27,9 +27,9 @@ HelperWatch is a three-component system connected over a local home Wi-Fi networ
 
 ### Wearable App (Smartwatch)
 
-The child wears a commodity Android or WearOS smartwatch running a background service. The watch is responsible for:
+The child wears a commodity Android or WearOS smartwatch running a native Kotlin background service (Jetpack Compose for Wear OS). The watch is responsible for:
 
-- **BLE beacon scanning** — Continuously scanning for nearby Bluetooth Low Energy signals from room beacons to determine which room the child is in.
+- **BLE beacon scanning** — Intermittently scanning for nearby Bluetooth Low Energy signals from room beacons to determine which room the child is in. WearOS aggressively throttles background BLE, so scanning uses `PendingIntent`-based callbacks and intermittent scan windows.
 - **Audio capture** — Recording ambient and spoken audio via the onboard microphone, compressing it (e.g., Opus codec), and transmitting it to the local server over Wi-Fi.
 - **Biometric sampling** — Reading heart rate data from the onboard sensor.
 - **Accelerometer monitoring** — Detecting motion patterns (walking, running, pacing, stillness).
@@ -82,7 +82,15 @@ See: [Indoor Positioning](Indoor%20Positioning.md)
 
 ## Network Discovery
 
-The system uses **mDNS / Zero-Configuration Networking** for local device discovery. When the mobile app or watch boots, it broadcasts a local query for `helperwatch.local`, similar to how Chromecast or AirPrint devices are discovered. No manual IP configuration is required.
+The system attempts **mDNS / Zero-Configuration Networking** as the primary local discovery mechanism. When the mobile app boots, it queries for `helperwatch.local`, similar to how Chromecast or AirPrint devices are discovered.
+
+**Known limitation:** mDNS is unreliable on Android and WearOS. WearOS devices frequently fail to resolve `.local` hostnames due to hardcoded Google DNS servers, and multicast traffic does not propagate reliably across Bluetooth-tethered connections. Android also requires explicit `LOCAL_NETWORK` runtime permissions for NSD/mDNS discovery.
+
+**Fallback discovery mechanisms (required):**
+
+- **UDP broadcast:** The server hub periodically broadcasts its IP address on the local network. Devices listen for this broadcast as a fallback.
+- **QR code pairing:** The server hub displays a QR code containing its local IP and pairing credentials. The mobile app or watch scans it during initial setup.
+- **Manual IP entry:** As a last resort, the caregiver can enter the server's IP address directly.
 
 ## Data Flow: End-to-End Prompting Loop
 

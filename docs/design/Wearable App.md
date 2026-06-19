@@ -2,7 +2,9 @@
 
 ## Overview
 
-The wearable app is an Android/WearOS background service that runs on a commodity smartwatch worn by the child. It is the system's primary sensor platform and the child's direct interface for receiving verbal cues.
+The wearable app is a native Kotlin/Jetpack Compose for Wear OS background service that runs on a commodity smartwatch worn by the child. It is the system's primary sensor platform and the child's direct interface for receiving verbal cues.
+
+> **Implementation note:** React Native does not have official support for WearOS. The watch app must be built natively in Kotlin using Jetpack Compose for Wear OS. Logic-layer code (data models, protocol handling) may be shared with the caregiver mobile app via Kotlin Multiplatform (KMP), but the UI and sensor-access layers are entirely separate.
 
 ## Target Hardware
 
@@ -23,11 +25,18 @@ See: [Hardware Guide](../guides/Hardware%20Guide.md) for specific device recomme
 
 ### BLE Beacon Scanning
 
-The watch continuously scans for Bluetooth Low Energy signals broadcast by room beacons placed throughout the home. It reports the RSSI (signal strength) values for each detected beacon to the local server, which determines the child's current room.
+The watch scans for Bluetooth Low Energy signals broadcast by room beacons placed throughout the home. It reports the RSSI (signal strength) values for each detected beacon to the local server, which determines the child's current room.
 
-- Scanning runs as a persistent background service.
-- Scan interval and power management must balance accuracy with battery life.
 - The app does not perform room assignment locally — it sends raw RSSI data to the server for processing.
+
+**Critical constraint: WearOS aggressively throttles background BLE scanning.** The OS will kill or suspend background scans within approximately 4–5 minutes of the screen dimming, even when using a Foreground Service. "Silent failures" are common — the scan appears to run in logs but the BLE hardware has been reclaimed by the OS.
+
+**Required mitigations:**
+
+- Use `PendingIntent`-based scanning instead of `ScanCallback`. This allows the OS to wake the app only when a matching beacon is found, rather than keeping the process alive.
+- Use intermittent scan windows (e.g., 12 seconds on, 48 seconds off) rather than continuous scanning. This reduces battery consumption by ~50% and avoids OS-imposed shutdowns.
+- Consider offloading persistent scanning to a paired phone via `CompanionDeviceManager` where possible.
+- Accept that room transitions may be detected with a delay of up to ~50 seconds in the worst case due to intermittent scanning. This is acceptable for the use case but must be accounted for in the server-side room assignment logic.
 
 See: [Indoor Positioning](Indoor%20Positioning.md) for the room-tracking algorithm.
 
@@ -79,7 +88,15 @@ The watch communicates exclusively with the local server hub over the home Wi-Fi
 
 ## Battery and Power Considerations
 
-<!-- TODO: Battery life targets and power management strategy will be defined during Phase 3 prototyping. Key trade-offs include BLE scan frequency, audio capture duty cycle, and Wi-Fi transmission interval. -->
+Battery life is the primary hardware constraint for the wearable app. Budget smartwatches typically have 300–400mAh batteries. With continuous BLE scanning, audio capture, and Wi-Fi transmission, realistic battery life is **4–6 hours** — not a full day.
+
+**Key trade-offs:**
+
+- **BLE scan frequency:** Intermittent scanning (12 sec on / 48 sec off) approximately halves BLE power draw compared to continuous scanning.
+- **Audio capture duty cycle:** Continuous audio capture is the largest power consumer. Event-triggered capture (recording only when a routine is active or a biometric spike is detected) can significantly extend battery life at the cost of ambient monitoring coverage.
+- **Wi-Fi transmission interval:** Batching telemetry data (e.g., sending every 5 seconds instead of continuously) reduces Wi-Fi radio wake time.
+
+**Practical expectation:** Most families should plan for mid-day charging. The watch charger should be placed in a location that fits naturally into the child's routine (e.g., at the lunch table or during a rest period).
 
 ## Related Documents
 

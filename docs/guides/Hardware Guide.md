@@ -16,6 +16,8 @@ This guide covers all hardware needed to run HelperWatch, with recommendations a
 
 The HelperWatch wearable app requires an Android or WearOS smartwatch with:
 
+> **Battery life expectation:** With active BLE scanning, audio capture, and Wi-Fi transmission, realistic battery life on budget watches is **4–6 hours**. Plan for mid-day charging.
+
 | Feature | Required | Notes |
 |---------|----------|-------|
 | Wi-Fi | Yes | For communication with the local server |
@@ -101,8 +103,8 @@ The HelperWatch server hub runs on the family's existing computer. The table bel
 |----------|---------------|---------------|-----------------|
 | **Modern Mac** (M1, M2, M3, M4 Apple Silicon) | Real-time | 8B parameters (Llama-3, Qwen3-8B) | Flawless — sub-second cue generation |
 | **Standard Windows/Linux PC** (Intel i5/i7, AMD Ryzen 5/7, no dedicated GPU) | Near real-time | 3B parameters (Phi-3, Qwen3-3B) | Good — adequate for all prompting |
-| **Budget PC** (older Intel i3, entry-level AMD, 8GB RAM) | ~1–2 second delay | 1.5B parameters | Functional — suitable for scheduled routines |
-| **Raspberry Pi 5** (~$35 dedicated hub) | ~1–2 second delay | 1.5B parameters | Functional — dedicated always-on option |
+| **Budget PC** (older Intel i3, entry-level AMD, 8GB RAM) | ~3–5 second delay | 1.5B parameters | Adequate — suitable for scheduled routines and template-based prompts |
+| **Raspberry Pi 5** (~$35 dedicated hub) | ~3–5 second delay | 1.5B parameters | Adequate — dedicated always-on option, not suited for real-time conversation |
 
 ### Minimum Specifications
 
@@ -118,7 +120,7 @@ The HelperWatch server hub runs on the family's existing computer. The table bel
 
 For families who don't want to leave a PC running, a Raspberry Pi 5 ($35) can serve as a dedicated, always-on server. It plugs into the home router via Ethernet and runs quietly with minimal power consumption.
 
-**Limitations:** The Pi 5 can run smaller AI models (1.5B parameters) with acceptable latency for routine-based prompting. It is not suitable for real-time conversational AI processing.
+**Limitations:** The Pi 5 can run smaller AI models (1.5B parameters) with ~3–5 second latency for cue generation. This is adequate for scheduled, routine-based prompting (where a few seconds of delay is acceptable) but is not suitable for real-time conversational AI processing.
 
 ## Summary: Shopping List
 

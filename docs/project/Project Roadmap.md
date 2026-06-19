@@ -33,11 +33,12 @@ The project is in its earliest stage: defining the mission, documenting the arch
 
 ### Phase 3: Wearable App (MVP)
 
-- Develop the Android/WearOS background service for:
-  - Continuous BLE beacon scanning and room reporting.
+- Develop the native Kotlin/Jetpack Compose for Wear OS background service for:
+  - Intermittent BLE beacon scanning (using `PendingIntent`-based callbacks to work within WearOS power management constraints) and room reporting.
   - Audio capture, compression, and transmission over local Wi-Fi.
   - Biometric sampling (heart rate) and accelerometer data.
   - Playback of AI-generated verbal cues via speaker or Bluetooth earbuds.
+- Validate battery life under real usage conditions (target: 4–6 hours with mid-day charging).
 - Pair with the local server hub and validate end-to-end prompting loop.
 
 ### Phase 4: Caregiver Mobile App (MVP)
@@ -46,7 +47,7 @@ The project is in its earliest stage: defining the mission, documenting the arch
   - Status-at-a-glance home screen (location, activity, biometric state).
   - Push-to-talk intercom mode for parent-to-AI command injection.
   - Macro routine trigger cards (bedtime, leaving the house, cool-down).
-- Implement local network discovery via mDNS.
+- Implement local network discovery (mDNS with UDP broadcast and QR code fallbacks).
 
 ### Phase 5: Behavioral Intelligence
 

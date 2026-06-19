@@ -75,21 +75,29 @@ Non-critical status updates (routine completed, task step advanced) are availabl
 
 **React Native + Expo** — Write the UI once in TypeScript, compile to native Android and iOS apps. Expo provides a managed build pipeline that simplifies distribution.
 
-**Shared code opportunity:** Because the WearOS watch app can also be built with React Native, significant data-handling, state-management, and networking code can be shared between the watch and mobile apps.
+> **Note:** The WearOS watch app is built natively in Kotlin (React Native does not support WearOS). Logic-layer code (data models, protocol definitions) can be shared between the watch and mobile apps via Kotlin Multiplatform (KMP), but the UI and platform layers are separate codebases.
 
 ## Network Communication
 
 ### Local (Home Wi-Fi)
 
-The app discovers the local server hub via **mDNS** (`helperwatch.local`), connecting over WebSockets. No manual IP configuration. Data transfer is instantaneous, uses no cellular data, and never leaves the house.
+The app attempts to discover the local server hub via **mDNS** (`helperwatch.local`), connecting over WebSockets.
 
-### Remote (Away from Home)
+**Known limitation:** mDNS is unreliable on Android due to hardcoded DNS servers, strict `LOCAL_NETWORK` permission requirements, and inconsistent multicast propagation. The app implements fallback discovery:
 
-When the caregiver is outside Wi-Fi range (e.g., backyard, driveway, or away from home while another caregiver is present):
+- **UDP broadcast listener** — The server periodically broadcasts its IP; the app listens.
+- **QR code scan** — During initial setup, the server displays a QR code the app can scan.
+- **Manual IP entry** — Available as a last resort in settings.
+
+### Remote (Away from Home) — Advanced / Optional
+
+For specific use cases where the caregiver needs access from outside the home network (e.g., monitoring a teenager at school, or checking in while a respite caregiver is present):
 
 - **Tailscale or WireGuard** creates an encrypted peer-to-peer tunnel between the phone and the home server.
 - To the app, it appears as if the phone is still on the home network.
 - No middleman corporation logs the data.
+
+Most families (child at home, parent in the same house or yard) will not need remote access. This is an advanced feature with its own setup requirements.
 
 Setup instructions for remote access are provided in the [Getting Started](../guides/Getting%20Started.md) guide.
 

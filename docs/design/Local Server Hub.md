@@ -11,7 +11,7 @@ The backend is packaged as a standard desktop application using **Electron** or 
 - `HelperWatch-Setup.exe` for Windows
 - `HelperWatch.dmg` for macOS
 
-The application bundles all dependencies internally. The caregiver never interacts with a terminal, installs Python, or configures a server.
+The application bundles its core dependencies (STT engine, networking) internally. The AI inference engine (Ollama) is managed as an external service — the app checks for it at launch, guides the caregiver through a one-time installation if needed, and manages its lifecycle in the background. The caregiver never interacts with a terminal, installs Python, or configures a server.
 
 ### First-Run Experience
 
@@ -34,12 +34,12 @@ No audio data is sent to any external service. Raw audio is deleted from memory 
 
 ### AI Orchestration (Local LLM)
 
-The server runs a local language model as a hidden background service for generating contextual verbal cues. Integration options include:
+The server runs a local language model via an external inference service for generating contextual verbal cues. Integration options include:
 
-- **Ollama** — Manages model downloads and inference with a simple API.
+- **Ollama** — Manages model downloads and inference with a simple REST API. The HelperWatch app checks for Ollama at launch, installs it if absent, and starts it as a background process. Model files are large (1.5B = ~1GB, 3B = ~2GB, 8B = ~4.5GB) and are downloaded during the first-run experience.
 - **LocalAI** — Alternative local inference server.
 
-The LLM receives structured input (transcript, room, biometrics, time, active routine) and selects or generates a response within deterministic guardrails (see below).
+The LLM's role is **classification and routing**, not creative conversation. It receives structured input (transcript, room, biometrics, time, active routine) and selects the most appropriate response from the parent-approved script set. This is a deliberate design choice: it aligns with the deterministic guardrails safety requirement and means that even small models (1.5B–3B parameters) can perform the task effectively, since they are classifying context and selecting from constrained options rather than generating freeform language.
 
 ### Auto-Benchmarking
 
@@ -49,7 +49,7 @@ During installation, the app benchmarks the host machine and automatically selec
 |---------------|----------------|----------|-----------------|
 | **Modern Mac** (M1–M4 Apple Silicon) | Real-time | 8B parameters (Llama-3, Qwen3-8B) | Flawless. Sub-second cue generation. |
 | **Standard Windows/Linux PC** (Intel i5/i7, AMD Ryzen, no GPU) | Near real-time | 3B parameters (Phi-3, Qwen3-3B) | Good. Adequate for all prompting tasks. |
-| **Budget PC or Raspberry Pi 5** | ~1–2 second delay | 1.5B parameters | Functional. Suitable for asynchronous routines. |
+| **Budget PC or Raspberry Pi 5** | ~3–5 second delay | 1.5B parameters | Adequate for scheduled routines and template-based prompting. Not suitable for real-time conversational processing. |
 
 The caregiver never sees model names, parameter counts, or quantization details.
 
@@ -97,8 +97,8 @@ For families whose hardware cannot run local models, the app offers a settings t
 ## Network Interface
 
 - **Watch communication** — MQTT or WebSockets over local Wi-Fi.
-- **Mobile app communication** — WebSockets over local Wi-Fi, discovered via mDNS (`helperwatch.local`).
-- **Remote access** — Optional Tailscale/WireGuard integration for secure access outside the home network.
+- **Mobile app communication** — WebSockets over local Wi-Fi. Discovery via mDNS is attempted first, with UDP broadcast and QR code pairing as fallbacks (see [System Architecture](System%20Architecture.md) for details on mDNS limitations on Android).
+- **Remote access** — Optional Tailscale/WireGuard integration for secure access outside the home network. This is an advanced feature for specific use cases (e.g., monitoring a teenager at school); most families will not need it.
 
 ## Related Documents
 

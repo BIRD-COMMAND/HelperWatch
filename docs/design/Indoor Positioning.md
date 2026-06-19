@@ -32,7 +32,7 @@ During initial setup, the caregiver performs a brief room calibration:
 
 This creates a baseline signal map that the system uses for ongoing room identification.
 
-<!-- TODO: Adaptive fingerprinting (automatic re-calibration as signal conditions change) will be explored during Phase 1 prototyping. -->
+Adaptive fingerprinting (automatic re-calibration as signal conditions change over time) is a Phase 1 development goal. Until implemented, caregivers may need to re-run calibration after significant furniture rearrangements or seasonal changes that affect signal propagation.
 
 ## Beacon Hardware Options
 
@@ -87,7 +87,8 @@ A typical home requires **4–6 beacons** for reliable coverage.
 
 - **Wall material matters.** Drywall is nearly transparent to BLE; concrete and metal significantly attenuate signals. Homes with unusual construction may require additional calibration or beacon density.
 - **Interference.** Other Bluetooth devices (speakers, headphones, smart home devices) can introduce noise. The fingerprinting algorithm should use a rolling average of RSSI values rather than instantaneous readings.
-- **Multi-floor homes.** BLE signals penetrate floors, which can cause ambiguity between rooms directly above/below each other. Additional beacons or floor-specific calibration may be needed.
+- **Scan delay.** WearOS aggressively throttles background BLE scanning (see [Wearable App](Wearable%20App.md)). With intermittent scan windows, room transitions may be detected with a delay of up to ~50 seconds in the worst case. The server-side room assignment logic must account for this latency.
+- **Multi-floor homes.** BLE signals penetrate floors, which can cause ambiguity between rooms directly above/below each other. Multi-floor homes need significantly more beacons and floor-specific calibration — this is a hard problem, not a minor edge case.
 
 ## References
 
