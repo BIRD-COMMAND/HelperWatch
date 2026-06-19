@@ -2,7 +2,7 @@
 
 ## Overview
 
-The caregiver mobile app is the primary interface through which parents interact with the HelperWatch system. Built with React Native + Expo for cross-platform deployment (Android and iOS), it provides real-time visibility into the child's status, direct control over AI behavior, and historical trend data — all without requiring the caregiver to walk to a desktop computer.
+The caregiver mobile app is the primary interface through which parents interact with the HelperWatch system. Built with React Native + Expo for cross-platform deployment (Android and iOS), it provides real-time visibility into the child's status, direct control over AI behavior, and historical trend data — connecting directly to the secure Cloud Backend.
 
 ## Design Philosophy: Calm UI
 
@@ -32,7 +32,7 @@ The most powerful tool for real-time caregiver intervention.
 **How it works:**
 
 1. The parent holds a prominent button and speaks a command: *"Tell Leo it's almost dinner time and he needs to pick up his blocks."*
-2. The app sends this text injection to the local server.
+2. The app sends this text injection to the Cloud Backend.
 3. The AI integrates the parent's command into its next verbal cue on the watch: *"Hey Leo, your dad says it's almost dinner time! Let's put away the blocks first."*
 
 The cue still comes from the familiar, patient AI voice — preventing the jarring shift of a direct walkie-talkie blast — while giving the parent absolute control. This preserves the child's focus and routine flow.
@@ -50,16 +50,14 @@ Tapping a card shifts the entire AI orchestration profile — altering prompt fr
 
 ### Trend Reports and Data Visualization
 
-<!-- TODO: Specific chart types and data views will be designed during Phase 4. -->
-
-The app surfaces locally-stored historical data to help caregivers and clinicians identify patterns:
+The app surfaces encrypted historical data from the Cloud Backend to help caregivers and clinicians identify patterns:
 
 - Room transition timelines.
 - Task completion durations over days and weeks.
 - Heart rate patterns correlated with rooms, times, and activities.
 - Meltdown frequency and pre-meltdown biometric signatures.
 
-All data is read from the local server. Nothing is transmitted externally.
+If historical logging is disabled by the caregiver, this screen will be inactive and no trend data is kept in the cloud.
 
 ### Alert and Notification System
 
@@ -79,27 +77,13 @@ Non-critical status updates (routine completed, task step advanced) are availabl
 
 ## Network Communication
 
-### Local (Home Wi-Fi)
+### Cloud Connection
 
-The app attempts to discover the local server hub via **mDNS** (`helperwatch.local`), connecting over WebSockets.
+The mobile app connects directly to the Cloud Backend over secure WebSocket (WSS) and HTTPS protocols. 
 
-**Known limitation:** mDNS is unreliable on Android due to hardcoded DNS servers, strict `LOCAL_NETWORK` permission requirements, and inconsistent multicast propagation. The app implements fallback discovery:
+Because the backend is hosted at a public domain, **remote access is supported natively**. Caregivers can monitor their child from anywhere—whether they are in the backyard, at work, or if the child is out with a respite caregiver—without requiring complex local networks, home routing setups, or peer-to-peer VPN configurations (like mDNS, Tailscale, or UDP broadcasts).
 
-- **UDP broadcast listener** — The server periodically broadcasts its IP; the app listens.
-- **QR code scan** — During initial setup, the server displays a QR code the app can scan.
-- **Manual IP entry** — Available as a last resort in settings.
-
-### Remote (Away from Home) — Advanced / Optional
-
-For specific use cases where the caregiver needs access from outside the home network (e.g., monitoring a teenager at school, or checking in while a respite caregiver is present):
-
-- **Tailscale or WireGuard** creates an encrypted peer-to-peer tunnel between the phone and the home server.
-- To the app, it appears as if the phone is still on the home network.
-- No middleman corporation logs the data.
-
-Most families (child at home, parent in the same house or yard) will not need remote access. This is an advanced feature with its own setup requirements.
-
-Setup instructions for remote access are provided in the [Getting Started](../guides/Getting%20Started.md) guide.
+Device provisioning is done by logging into the caregiver account and entering a pairing code displayed on the smartwatch or flashing ESP32 boards using a browser tool.
 
 ## References
 
@@ -108,5 +92,6 @@ Setup instructions for remote access are provided in the [Getting Started](../gu
 ## Related Documents
 
 - [System Architecture](System%20Architecture.md) — How the mobile app fits into the system
-- [Local Server Hub](Local%20Server%20Hub.md) — The backend the app communicates with
+- [Cloud Backend](Cloud%20Backend.md) — The cloud services handling API requests and routine configurations
 - [Getting Started](../guides/Getting%20Started.md) — Caregiver setup walkthrough
+

@@ -1,142 +1,118 @@
 # Hardware Guide
 
-This guide covers all hardware needed to run HelperWatch, with recommendations and cost estimates at each price point.
+This guide covers all hardware needed to deploy HelperWatch in a home, with recommendations and cost estimates.
 
 ## Total System Cost Estimate
 
-| Configuration | Estimated Cost |
-|---------------|---------------|
-| Budget (ESP32 beacons + used watch + existing PC) | $55 – $100 |
-| Standard (commercial beacons + mid-range watch + existing PC) | $100 – $180 |
-| Dedicated hub (add a Raspberry Pi 5) | +$35 |
+| Component | Cost Type | Estimated Cost |
+|-----------|-----------|----------------|
+| **Smartwatch** (Refurbished WearOS) | One-time | $35 – $100 |
+| **Room Scanner Nodes** (4-6 ESP32 boards) | One-time | $15 – $25 |
+| **USB Wall Chargers** (if not owned) | One-time | $10 |
+| **Cloud Hosting & AI Tokens** | Recurring | $5 – $15 / month |
+| **Total Initial Hardware Cost** | **One-time** | **$60 – $135** |
 
 ## Smartwatch
 
 ### Requirements
 
-The HelperWatch wearable app requires an Android or WearOS smartwatch with:
+The HelperWatch wearable app requires a budget Android or WearOS smartwatch with:
 
-> **Battery life expectation:** With active BLE scanning, audio capture, and Wi-Fi transmission, realistic battery life on budget watches is **4–6 hours**. Plan for mid-day charging.
+> **Battery life expectation:** By replacing battery-heavy background BLE scanning with native, low-power BLE advertising, the watch's battery life is significantly extended. Under typical caregiving conditions, the watch can be expected to last **12–16+ hours**, making it suitable for a full day of use without requiring a mid-day charge.
 
 | Feature | Required | Notes |
 |---------|----------|-------|
-| Wi-Fi | Yes | For communication with the local server |
-| Bluetooth Low Energy | Yes | For scanning room beacons |
-| Microphone | Yes | For audio capture |
-| Speaker | Yes | For verbal cue playback (earbuds are preferred but speaker is fallback) |
+| Wi-Fi | Yes | For direct connection to the Cloud Backend |
+| Bluetooth Low Energy | Yes | For broadcasting its BLE advertising ID |
+| Microphone | Yes | For voice capture and on-device STT |
+| Speaker | Yes | For verbal cue playback |
 | Heart rate sensor | Yes | Optical PPG sensor for biometric monitoring |
-| Accelerometer | Yes | For motion pattern detection |
+| Accelerometer | Yes | For motion pattern detection (pacing, walking) |
 | Bluetooth audio output | Recommended | For pairing with wireless earbuds (earbud-first default) |
 
 ### Recommended Devices
 
-<!-- TODO: Specific model recommendations and purchasing links will be updated as device compatibility testing progresses. -->
-
 **Budget tier ($35–50):**
-- Older refurbished Samsung Galaxy watches
-- Generic standalone Android smartwatches (often marketed as kids' watches)
-- Budget fitness watches running full or Go-edition Android
+- Older refurbished Samsung Galaxy watches (WearOS compatible models)
+- Refurbished WearOS devices from Motorola, Fossil, or Mobvoi (TicWatch)
 
 **Mid-range tier ($50–80):**
-- Samsung Galaxy Watch Active2 (refurbished)
-- Mid-range WearOS devices from major manufacturers
+- Refurbished Samsung Galaxy Watch 4 or 5
+- Newer WearOS smartwatches from major brands
 
 **What to avoid:**
-- Watches without Wi-Fi (Bluetooth-only fitness bands)
-- Proprietary OS watches that do not support Android app sideloading (e.g., Apple Watch, basic Fitbit models)
+- Watches without Wi-Fi (Bluetooth-only fitness trackers)
+- Smartwatches running proprietary operating systems that do not support custom WearOS/Android apps (e.g., Apple Watch, proprietary Fitbit models, Garmin watches)
 
 ### Wireless Earbuds
 
 Any standard Bluetooth earbuds compatible with the smartwatch. The system defaults to earbud output for privacy and stigma reduction. Budget Bluetooth earbuds ($10–20) are sufficient.
 
-## Room Beacons
+---
 
-HelperWatch uses BLE (Bluetooth Low Energy) beacons placed in each room to track the child's location. A typical home needs **4–6 beacons**.
+## Room Scanner Nodes
 
-### Option A: ESP32 Development Boards (~$3–4 each)
+HelperWatch uses wall-powered ESP32 development boards placed in each room to scan for the child's watch and report signal strengths. A typical home needs **4–6 scanner nodes** (one per room).
 
-The most affordable option. These are small microcontroller boards that are flashed with a simple beacon script and plugged into USB wall chargers.
+### ESP32 Development Boards (~$3–4 each)
+
+These are small microcontrollers that plug into standard USB wall outlets and connect to your home Wi-Fi.
 
 | Detail | Specification |
 |--------|--------------|
 | **Cost** | ~$3–4 per unit |
 | **Power** | USB wall charger (continuous power, no batteries) |
-| **Setup** | One-time firmware flash using provided tool |
-| **Recommended boards** | ESP32-C3, ESP32-S3, or standard ESP32 dev boards |
+| **Setup** | One-time firmware flash using a web browser tool |
+| **Recommended boards** | ESP32-C3, ESP32-S3, or standard ESP32 development boards |
 | **Where to buy** | Amazon, AliExpress |
 
-**Pros:** Extremely cheap, always powered, firmware-updatable.
+**Pros:** Extremely cheap, continuously powered, firmware-updatable, scans continuously (100% duty cycle) for fast transition detection.
 
-**Cons:** Requires a one-time flash step (instructions provided). Slightly larger than commercial tags.
+**Cons:** Requires a one-time setup step to flash the firmware.
 
-### Option B: Commercial BLE Beacon Tags (~$10–15 each)
-
-Off-the-shelf beacon devices that work out of the box.
-
-| Detail | Specification |
-|--------|--------------|
-| **Cost** | ~$10–15 per unit |
-| **Power** | Coin-cell battery (1+ year lifespan) |
-| **Setup** | None — activate and place |
-| **Compatible standards** | iBeacon, Eddystone |
-| **Recommended brands** | Feasycom, RadBeacon, or generic iBeacon tags |
-| **Where to buy** | Amazon |
-
-**Pros:** Zero configuration, very small and discreet, long battery life.
-
-**Cons:** More expensive, batteries eventually need replacement, less flexibility.
+*Note: Commercial BLE beacon tags (such as coin-cell iBeacons) cannot be used in this architecture because they are broadcast-only and cannot scan for the watch or connect to Wi-Fi.*
 
 ### Placement Tips
 
-- Place beacons near the center of each room, at mid-height (shelf, counter, or wall-mounted).
-- Avoid placing directly on or behind large metal objects (refrigerators, filing cabinets).
+- Plug nodes into wall outlets located near the center of each room, at mid-height (on a shelf, counter, or wall outlet).
+- Avoid placing directly behind large metal objects (refrigerators, metal cabinets) that block Bluetooth signals.
 - Avoid placement directly behind large mirrors (signal reflection can cause inaccuracy).
-- For multi-floor homes, consider additional beacons to resolve above/below ambiguity.
+- For multi-floor homes, place nodes strategically to maximize distance between vertical lines to resolve above/below floor ambiguity.
 
 See: [Indoor Positioning](../design/Indoor%20Positioning.md) for detailed placement guidance and calibration.
 
-## Server Hardware (Local AI Hub)
+---
 
-The HelperWatch server hub runs on the family's existing computer. The table below shows expected performance by hardware tier.
+## Cloud Backend Service
 
-| Hardware | Speech-to-Text | AI Model Size | Response Quality |
-|----------|---------------|---------------|-----------------|
-| **Modern Mac** (M1, M2, M3, M4 Apple Silicon) | Real-time | 8B parameters (Llama-3, Qwen3-8B) | Flawless — sub-second cue generation |
-| **Standard Windows/Linux PC** (Intel i5/i7, AMD Ryzen 5/7, no dedicated GPU) | Near real-time | 3B parameters (Phi-3, Qwen3-3B) | Good — adequate for all prompting |
-| **Budget PC** (older Intel i3, entry-level AMD, 8GB RAM) | ~3–5 second delay | 1.5B parameters | Adequate — suitable for scheduled routines and template-based prompts |
-| **Raspberry Pi 5** (~$35 dedicated hub) | ~3–5 second delay | 1.5B parameters | Adequate — dedicated always-on option, not suited for real-time conversation |
+HelperWatch runs its AI processing and orchestration in a secure cloud environment. **No home computer, desktop application, or local server (like a Raspberry Pi) is required.**
 
-### Minimum Specifications
+### Benefits of Cloud-First:
+- **No hardware maintenance:** Caregivers do not need to keep a home computer running 24/7 or manage Ollama and model downloads.
+- **Zero local network setup:** Eliminates local discovery errors (mDNS failures) and complex peer-to-peer remote access tunnels (like Tailscale).
+- **Sub-second response time:** Cues are classified and routed on high-performance cloud hardware instantly.
 
-<!-- TODO: Exact minimum specs will be validated during Phase 2 prototyping. -->
+### Ongoing Cloud Costs:
+A monthly subscription or token usage fee (typically **$5–15/month**) covers cloud hosting, database encryption, and language model token usage.
 
-- **CPU:** Any x86-64 or ARM64 processor from the last ~5 years
-- **RAM:** 8 GB minimum (16 GB recommended for 8B models)
-- **Storage:** ~5 GB free for the application and AI models
-- **OS:** Windows 10+, macOS 12+, or Linux (Ubuntu 22.04+ or equivalent)
-- **Network:** Connected to the same Wi-Fi network as the watch
-
-### Raspberry Pi 5 as a Dedicated Hub
-
-For families who don't want to leave a PC running, a Raspberry Pi 5 ($35) can serve as a dedicated, always-on server. It plugs into the home router via Ethernet and runs quietly with minimal power consumption.
-
-**Limitations:** The Pi 5 can run smaller AI models (1.5B parameters) with ~3–5 second latency for cue generation. This is adequate for scheduled, routine-based prompting (where a few seconds of delay is acceptable) but is not suitable for real-time conversational AI processing.
+---
 
 ## Summary: Shopping List
 
 ### Minimum viable setup:
 
-- 1x budget Android smartwatch (refurbished): ~$40
+- 1x budget Android/WearOS smartwatch (refurbished): ~$40
 - 4x ESP32 dev boards: ~$15
 - 4x USB wall chargers (if not already owned): ~$10
-- Existing home computer: $0
-- Existing smartphone: $0
+- HelperWatch Cloud account: ~$5-15/month
 
-**Total: ~$65**
+**Total initial hardware cost: ~$65**
+
+---
 
 ## Related Documents
 
 - [Getting Started](Getting%20Started.md) — Setup walkthrough
-- [Indoor Positioning](../design/Indoor%20Positioning.md) — Beacon technology details
-- [Local Server Hub](../design/Local%20Server%20Hub.md) — Server software and performance
-- [System Architecture](../design/System%20Architecture.md) — How all components connect
+- [Indoor Positioning](../design/Indoor%20Positioning.md) — Flipped BLE scanning details
+- [Cloud Backend](../design/Cloud%20Backend.md) — Cloud services details
+- [System Architecture](../design/System%20Architecture.md) — Technical component overview

@@ -31,7 +31,7 @@ Feature suggestions are welcome. Please open a GitHub Issue describing:
 <!-- TODO: Detailed PR process, branch naming conventions, and code review expectations will be documented here once active development begins. -->
 
 1. Fork the repository and create a feature branch.
-2. Ensure your changes do not introduce cloud data transmission without explicit, transparent user opt-in.
+2. Ensure your changes adhere to our privacy-by-design architecture, ensuring that raw audio does not leave the smartwatch and data transmission is encrypted and minimized.
 3. Include or update tests where applicable.
 4. Submit a pull request with a clear description of what changed and why.
 

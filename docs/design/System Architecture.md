@@ -2,25 +2,22 @@
 
 ## Overview
 
-HelperWatch is a three-component system connected over a local home Wi-Fi network. No data leaves the home network by default.
+HelperWatch is a cloud-coordinated cognitive scaffolding system that connects smartwatches, ESP32 room scanner nodes, and caregiver mobile apps over secure internet protocols to a centralized Cloud Backend.
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        Home Wi-Fi Network                          │
-│                                                                     │
-│  ┌──────────────────┐    ┌──────────────────┐    ┌────────────────┐ │
-│  │   Wearable App   │    │ Local Server Hub │    │ Caregiver App  │ │
-│  │  (Native Kotlin  │◄──►│ (Desktop App:    │◄──►│ (React Native  │ │
-│  │   WearOS)        │    │  Windows / Mac)  │    │  Mobile App)   │ │
-│  └──────────────────┘    └──────────────────┘    └────────────────┘ │
-│          ▲                        ▲                                  │
-│          │ BLE                    │ Optional                        │
-│  ┌───────┴──────────┐    ┌───────┴──────────┐                      │
-│  │  Room Beacons    │    │  Cloud AI API    │                      │
-│  │ (ESP32 / BLE     │    │  (Fallback only, │                      │
-│  │  Tags per room)  │    │   user opt-in)   │                      │
-│  └──────────────────┘    └──────────────────┘                      │
-└─────────────────────────────────────────────────────────────────────┘
+                     ┌───────────────────────┐
+                     │     Cloud Backend     │
+                     │ (APIs, STT Routing,   │
+                     │  LLM Orchestration)   │
+                     └───────────┬───────────┘
+            ┌────────────────────┼───────────────────┐
+            ▼                    ▼                   ▼
+     ┌──────────────┐     ┌─────────────┐     ┌──────────────┐
+     │  Smartwatch  │     │ ESP32 Room  │     │Mobile App /  │
+     │  (BLE adv,   │     │  Scanners   │     │Caregiver UI  │
+     │  On-Watch    │     │ (BLE Scan + │     │(React Native)│
+     │  Moonshine)  │     │   Wi-Fi)    │     └──────────────┘
+     └──────────────┘     └─────────────┘
 ```
 
 ## Components
@@ -29,45 +26,45 @@ HelperWatch is a three-component system connected over a local home Wi-Fi networ
 
 The child wears a commodity Android or WearOS smartwatch running a native Kotlin background service (Jetpack Compose for Wear OS). The watch is responsible for:
 
-- **BLE beacon scanning** — Intermittently scanning for nearby Bluetooth Low Energy signals from room beacons to determine which room the child is in. WearOS aggressively throttles background BLE, so scanning uses `PendingIntent`-based callbacks and intermittent scan windows.
-- **Audio capture** — Recording ambient and spoken audio via the onboard microphone, compressing it (e.g., Opus codec), and transmitting it to the local server over Wi-Fi.
-- **Biometric sampling** — Reading heart rate data from the onboard sensor.
-- **Accelerometer monitoring** — Detecting motion patterns (walking, running, pacing, stillness).
-- **Cue playback** — Playing AI-generated verbal prompts through the watch speaker or routing audio to paired Bluetooth earbuds.
+- **BLE advertising** — Continuously broadcasting a unique Bluetooth Low Energy identifier. This is a low-power, native operation that WearOS does not throttle, ensuring stable room detection.
+- **On-device speech-to-text** — Transcribing spoken audio locally on the watch using an embedded lightweight model (Moonshine STT). This ensures raw audio never leaves the smartwatch.
+- **Biometric sampling** — Reading heart rate data from the onboard optical sensor.
+- **Accelerometer monitoring** — Detecting motion patterns (walking, pacing, stillness).
+- **Telemetry transmission** — Transmitting text transcripts, biometrics, and accelerometer states to the Cloud Backend over Wi-Fi.
+- **Cue playback** — Playing verbal prompts received from the Cloud Backend through the watch speaker or paired Bluetooth earbuds.
 
 See: [Wearable App](Wearable%20App.md)
 
-### Local Server Hub (Desktop Application)
+### Cloud Backend
 
-A standard desktop application (packaged via Electron or Tauri) that runs on the family's existing home computer. This is the computational engine of the system. It handles:
+A secure, managed cloud server that coordinates the HelperWatch system. It handles:
 
-- **Speech-to-text** — Transcribing incoming audio using an embedded local model (Whisper.cpp or Moonshine). No audio data leaves the machine.
-- **AI orchestration** — Processing transcripts, biometric data, and room context through a local language model (via Ollama or equivalent) to generate appropriate verbal cues.
-- **Routine management** — Storing parent-configured routines, scripts, and schedules.
-- **Data logging** — Maintaining local-only logs of room transitions, task completions, and biometric trends for caregiver review.
-- **Auto-benchmarking** — Detecting the host machine's capabilities at install time and selecting the appropriate AI model size automatically.
+- **Telemetry reception** — Receiving real-time RSSI signal strengths from ESP32 room scanners and biometric/transcript telemetry from the watch.
+- **Room resolution** — Determining the child's room location by comparing RSSI signal strength reports from all active room nodes.
+- **AI orchestration** — Processing text transcripts, biometrics, and room context through a managed Large Language Model (LLM classifier/router) to select parent-approved verbal cues.
+- **Routine management** — Storing caregiver-configured routines, schedules, and scripts.
+- **Transient logging** — Storing encrypted trend logs for caregiver review (if logging is enabled) or purging transcripts immediately from memory after processing.
 
-See: [Local Server Hub](Local%20Server%20Hub.md)
+See: [Cloud Backend](Cloud%20Backend.md)
 
 ### Caregiver Mobile App
 
-A React Native + Expo mobile application for Android and iOS. This is the caregiver's primary interface to the system. It provides:
+A React Native + Expo mobile application for Android and iOS. This is the caregiver's primary interface to the system. It connects directly to the Cloud Backend and provides:
 
-- **Real-time status dashboard** — Child's current room, active routine, biometric state, and AI activity at a glance.
-- **Push-to-talk intercom** — Parent speaks a command that the AI integrates into its next cue to the child, maintaining the familiar AI voice.
-- **Routine triggers** — One-tap macro cards to start bedtime routines, transition sequences, or meltdown intercepts.
-- **Trend reporting** — Historical data visualizations for clinical or personal use.
+- **Real-time status dashboard** — Child's current room, active routine, biometric state, and active cue feedback.
+- **Push-to-talk intercom** — Parents speak a command that the Cloud Backend integrates into the next verbal cue played to the child.
+- **Routine triggers & configuration** — Creating routines, defining scripts, setting biometric thresholds, and triggering macros (e.g., bedtime sequence).
+- **Trend reporting** — Visualizing historical data synced from the Cloud Backend (if logging is enabled).
 
 See: [Caregiver Mobile App](Caregiver%20Mobile%20App.md)
 
-### Room Beacons (Indoor Positioning)
+### Room Scanner Nodes
 
-Small, inexpensive devices placed in each room that continuously broadcast a unique Bluetooth Low Energy identifier. Two options:
+Small, wall-powered ESP32 development boards (~$3–4 each) plugged into USB outlets in each room. They are flashed with firmware that:
 
-- **ESP32 development boards** (~$3–4 each) plugged into USB wall chargers, flashed with a static beacon script.
-- **Commercial BLE beacon tags** (~$10–15 each) running on coin-cell batteries for 1+ years.
-
-The wearable scans for these signals and uses RSSI (signal strength) to determine room-level location with >90% accuracy.
+- Continuously scans for the smartwatch's BLE advertisements.
+- Measures the RSSI (signal strength) of the watch's signal.
+- Reports the RSSI values to the Cloud Backend over Wi-Fi in real-time.
 
 See: [Indoor Positioning](Indoor%20Positioning.md)
 
@@ -75,46 +72,35 @@ See: [Indoor Positioning](Indoor%20Positioning.md)
 
 | Path | Protocol | Notes |
 |------|----------|-------|
-| Watch ↔ Server | MQTT or WebSockets over Wi-Fi | Lightweight, low-latency, bidirectional |
-| Mobile App ↔ Server | WebSockets over Wi-Fi | Same local network; discovered via mDNS |
-| Mobile App ↔ Server (remote) | Tailscale / WireGuard tunnel | Encrypted peer-to-peer; no middleman |
-| Server → Cloud API (optional) | HTTPS | User opt-in only; data anonymized before transmission |
+| Watch → Cloud Backend | WebSocket (WSS) | Persistent, bidirectional telemetry and cue delivery |
+| ESP32 Nodes → Cloud Backend | WebSocket (WSS) or HTTPS POST | Low-latency RSSI reporting |
+| Mobile App → Cloud Backend | WebSocket (WSS) and HTTPS | Real-time state syncing and routine configuration |
 
-## Network Discovery
+## Device Provisioning and Account Association
 
-The system attempts **mDNS / Zero-Configuration Networking** as the primary local discovery mechanism. When the mobile app boots, it queries for `helperwatch.local`, similar to how Chromecast or AirPrint devices are discovered.
+HelperWatch eliminates the complexity of local discovery protocols (like mDNS) and remote network tunnels (like Tailscale). Devices communicate with a known cloud address.
 
-**Known limitation:** mDNS is unreliable on Android and WearOS. WearOS devices frequently fail to resolve `.local` hostnames due to hardcoded Google DNS servers, and multicast traffic does not propagate reliably across Bluetooth-tethered connections. Android also requires explicit `LOCAL_NETWORK` runtime permissions for NSD/mDNS discovery.
-
-**Fallback discovery mechanisms (required):**
-
-- **UDP broadcast:** The server hub periodically broadcasts its IP address on the local network. Devices listen for this broadcast as a fallback.
-- **QR code pairing:** The server hub displays a QR code containing its local IP and pairing credentials. The mobile app or watch scans it during initial setup.
-- **Manual IP entry:** As a last resort, the caregiver can enter the server's IP address directly.
+- **Account Setup:** The caregiver registers a HelperWatch account via the mobile app.
+- **ESP32 Node Pairing:** ESP32 room scanners are flashed with the family's Wi-Fi details and an account token via a web-based flashing tool (using WebUSB/WebSerial).
+- **Watch Pairing:** The watch app displays a 6-digit pairing code on its first launch, which the caregiver enters into the mobile app to link the wearable to their cloud account.
 
 ## Data Flow: End-to-End Prompting Loop
 
-1. The watch detects the child has entered the kitchen (BLE beacon signal spike).
-2. The watch captures ambient audio and compresses it.
-3. Audio + room context + biometric snapshot are sent to the local server over Wi-Fi.
-4. The server transcribes the audio locally (Whisper.cpp).
-5. The server feeds the transcript, room, biometrics, time of day, and active routine into the local LLM.
-6. The LLM selects an appropriate response from the parent-approved script set (deterministic guardrails).
-7. The server sends the text cue back to the watch.
-8. The watch plays the cue through the speaker or earbuds.
-9. The server updates the caregiver mobile app dashboard in real time.
-
-## Cloud API Fallback
-
-For families whose hardware cannot run local AI models (e.g., Chromebooks or very old PCs), the server hub offers a toggle:
-
-- **Local Processing** (default) — Everything stays on the home computer. Free. 100% private.
-- **Private Cloud API** — The caregiver inputs an API key (e.g., OpenAI, Groq). Data is anonymized and stripped of metadata before transmission. The caregiver makes this choice transparently, understanding the trade-off.
+1. The watch broadcasts its unique BLE advertiser ID.
+2. The ESP32 scanner node in the kitchen detects the watch with a strong RSSI and reports this to the Cloud Backend.
+3. The Cloud Backend resolves that the child has transitioned into the kitchen.
+4. The watch captures spoken audio and transcribes it on-device (Moonshine STT).
+5. The watch transmits the text transcript + biometrics to the Cloud Backend.
+6. The Cloud Backend LLM classifier processes the transcript, active room (kitchen), biometrics, and routine context.
+7. The Cloud Backend selects the corresponding parent-approved prompt script (deterministic guardrails).
+8. The Cloud Backend sends the prompt text back to the watch over WSS.
+9. The watch plays the prompt.
+10. The Cloud Backend updates the caregiver mobile app in real-time.
 
 ## Related Documents
 
-- [Wearable App](Wearable%20App.md) — Watch-side technical details
-- [Local Server Hub](Local%20Server%20Hub.md) — Backend application details
-- [Caregiver Mobile App](Caregiver%20Mobile%20App.md) — Mobile UX and engineering
-- [Indoor Positioning](Indoor%20Positioning.md) — BLE beacon setup and room tracking
-- [Privacy and Data Sovereignty](../ethics/Privacy%20and%20Data%20Sovereignty.md) — Data handling and lifecycle
+- [Wearable App](Wearable%20App.md) — Watch-side details
+- [Cloud Backend](Cloud%20Backend.md) — Cloud services details
+- [Caregiver Mobile App](Caregiver%20Mobile%20App.md) — Caregiver app details
+- [Indoor Positioning](Indoor%20Positioning.md) — ESP32 room scanner setup and positioning logic
+- [Privacy and Data Sovereignty](../ethics/Privacy%20and%20Data%20Sovereignty.md) — Data handling and cloud privacy pledge

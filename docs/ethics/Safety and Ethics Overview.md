@@ -18,9 +18,9 @@ This document establishes the ethical framework that governs every design decisi
 
 These are hard lines. They are not features to be toggled or negotiated. Any contribution, fork, or deployment that violates these requirements is considered a misuse of the project.
 
-### 1. Local AI Sovereignty
+### 1. Data Sovereignty & Minimization
 
-All sensitive data — audio and biometrics — is processed locally on the family's own hardware. No raw audio or biometric data leaves the local home network unless the caregiver explicitly and transparently opts into a cloud API fallback for hardware-limitation reasons.
+To protect the family's privacy, speech-to-text transcription occurs directly on the smartwatch using an embedded local model (Moonshine STT). Only resulting text transcripts are sent to the Cloud Backend for LLM processing. All cloud processing is transient, deleting transcripts immediately from memory after processing. No raw audio ever leaves the watch, and no data is stored permanently on our servers unless explicitly opted into by the caregiver.
 
 See: [Privacy and Data Sovereignty](Privacy%20and%20Data%20Sovereignty.md)
 
@@ -46,7 +46,7 @@ Public-facing documentation of all risks, mitigations, and design trade-offs is 
 
 Every identified risk is documented with its mitigation status in [Risks and Mitigations](Risks%20and%20Mitigations.md). Risks fall into three categories:
 
-1. **Fully mitigatable** — Addressed through architecture and design (e.g., local processing neutralizes cloud data breach risk).
+1. **Fully mitigatable** — Addressed through architecture and design (e.g., on-device transcription and transient cloud memory processing neutralize raw audio leakage risk).
 2. **Partially mitigatable** — Reduced through design but requiring caregiver awareness (e.g., bystander privacy, stigma).
 3. **Design-philosophy-only** — Cannot be eliminated through code; mitigated through education, documentation, and intended-use framing (e.g., loss of human intuition, over-reliance).
 

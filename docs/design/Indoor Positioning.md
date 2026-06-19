@@ -6,89 +6,92 @@ Standard GPS does not work reliably indoors due to signal attenuation from walls
 
 HelperWatch requires **>90% room-level accuracy** to provide contextually appropriate prompts (e.g., knowing the child is in the bathroom to trigger the hygiene routine, not the bedroom routine).
 
-## Solution: BLE Beacon Mesh
+## Solution: Flipped BLE Room Scanner Mesh
 
-Instead of GPS, HelperWatch uses a network of small Bluetooth Low Energy (BLE) beacon devices placed throughout the home — one per room. The child's smartwatch continuously scans for these beacon signals, and the local server uses signal strength data to determine which room the child is in.
+To achieve reliable room-level accuracy without overloading the smartwatch's battery or fighting WearOS background scanning limitations, HelperWatch uses a **flipped positioning architecture**:
+
+- **Smartwatch as Advertiser:** The child's smartwatch acts as a passive BLE broadcaster, advertising a unique, secure BLE identifier. WearOS natively handles background BLE advertising with negligible power consumption.
+- **ESP32 Boards as Active Scanners:** Inexpensive, wall-powered ESP32 microcontroller boards are plugged into outlets in each room. They scan continuously for the watch's BLE signal, measure the signal strength, and report RSSI values via Wi-Fi to the Cloud Backend.
+- **Cloud Backend as Resolver:** The Cloud Backend collects RSSI values from all active scanner nodes and determines which room the child is in.
+
+```
+  ┌──────────────┐
+  │  Smartwatch  │ (Passive BLE Advertising)
+  └──────┬───────┘
+         │
+         │ BLE Broadcast Signal
+         ▼
+  ┌──────────────┐  -60 dBm   ┌────────────────┐
+  │ ESP32 Node   ├───────────►│                │
+  │  (Kitchen)   │            │                │
+  └──────────────┘            │                │
+                              │ Cloud Backend  │ (RSSI Comparison)
+  ┌──────────────┐  -85 dBm   │                │
+  │ ESP32 Node   ├───────────►│                │
+  │  (Bedroom)   │            │                │
+  └──────────────┘            └────────────────┘
+```
 
 ## How It Works
 
 ### Room Fingerprinting via RSSI
 
-Each beacon continuously broadcasts a unique identifier. The watch detects these broadcasts and measures the **RSSI (Received Signal Strength Indicator)** for each beacon.
+Each ESP32 node continuously scans for the watch's specific advertisement. When it receives a packet, it measures the **RSSI (Received Signal Strength Indicator)**.
 
-- When the child is in the kitchen, the kitchen beacon's RSSI is strongest.
-- As they walk into the bedroom, the bedroom beacon's signal strengthens and the kitchen beacon's fades.
-- The local server compares the current RSSI profile against known room signatures to determine location.
+- When the child is in the kitchen, the kitchen ESP32 reports the strongest RSSI (e.g., -55 dBm).
+- The bedroom ESP32 might still detect the watch but will report a much weaker RSSI (e.g., -85 dBm).
+- The Cloud Backend compares the reports in real-time. The room with the strongest running-average RSSI is resolved as the child's active room.
 
-This approach — known as RSSI fingerprinting — has been demonstrated to achieve >90% room-level accuracy in standard residential environments (Kim et al., 2021).
+This RSSI fingerprinting approach achieves >90% room-level accuracy in standard residential environments (Kim et al., 2021).
 
 ### Fingerprinting Calibration
 
 During initial setup, the caregiver performs a brief room calibration:
 
-1. Walk to each room with the watch and tap "I'm in the Kitchen" (or equivalent) in the setup app.
-2. The system records the BLE signal profile for that room.
-3. Repeat for each room.
+1. Stand in a room with the child's watch.
+2. In the caregiver mobile app, tap **"Calibrate [Room Name]"** (e.g., "Kitchen").
+3. The Cloud Backend records the RSSI profiles received by all ESP32 scanner nodes for 10–15 seconds to create a baseline signature.
+4. Repeat for each room.
 
-This creates a baseline signal map that the system uses for ongoing room identification.
+This creates a baseline signal map that the backend uses for ongoing room identification.
 
-Adaptive fingerprinting (automatic re-calibration as signal conditions change over time) is a Phase 1 development goal. Until implemented, caregivers may need to re-run calibration after significant furniture rearrangements or seasonal changes that affect signal propagation.
+Adaptive fingerprinting (automatic re-calibration as signal conditions change over time) is a development goal. Until implemented, caregivers may need to re-run calibration after significant furniture rearrangements or seasonal changes that affect signal propagation.
 
-## Beacon Hardware Options
+## Scanner Node Hardware: ESP32 Boards (~$3–4 each)
 
-### Option A: ESP32 Development Boards (~$3–4 each)
-
-Raw ESP32 or ESP32-C3 development boards purchased from Amazon or AliExpress. No soldering required.
-
-**Setup:**
-1. Plug the board into a standard USB wall charger in each room.
-2. Flash it with a small, static open-source script that continuously broadcasts a unique BLE beacon ID.
-
-**Pros:**
-- Extremely cheap.
-- Powered continuously via USB (no battery replacement).
-- Can be reflashed with updated firmware if the beacon protocol evolves.
-
-**Cons:**
-- Requires a one-time firmware flash (instructions provided in the setup guide).
-- Slightly larger than commercial beacon tags.
-
-### Option B: Commercial BLE Beacon Tags (~$10–15 each)
-
-Off-the-shelf, battery-powered BLE beacon devices (e.g., Feasycom, RadBeacon, or generic iBeacon-compatible tags).
+HelperWatch uses standard, off-the-shelf ESP32 or ESP32-C3 development boards (e.g., NodeMCU style) plugged into USB chargers.
 
 **Setup:**
-1. Activate the beacon (some are always-on out of the box).
-2. Stick it to the wall or a shelf in each room.
+1. Plug the ESP32 board into a standard USB wall charger in each room.
+2. Flash the board with the HelperWatch scanner firmware using a web-based flashing tool (WebUSB/WebSerial).
+3. Connect the board to the home Wi-Fi network and register it under the caregiver account during setup.
 
 **Pros:**
-- Zero configuration. No flashing, no USB.
-- Very small and discreet.
-- Coin-cell battery lasts 1+ years.
+- Extremely cheap (~$3–4 per room).
+- Wall-powered (no battery replacements or maintenance).
+- Scans continuously (100% duty cycle) for instant transition detection.
+- Upgradable over-the-air (OTA) or via USB.
 
-**Cons:**
-- More expensive per unit.
-- Batteries eventually need replacement.
-- Less flexibility if firmware changes are needed.
+Because commercial BLE tags can only broadcast and cannot scan or connect to Wi-Fi, they are not compatible with this flipped architecture. The ESP32 scanner node is the required positioning hardware.
 
 ## Typical Home Deployment
 
-| Room | Beacon Placement | Notes |
-|------|-----------------|-------|
-| Kitchen | On the refrigerator or a cabinet | Central to the room, away from metal appliances that might interfere |
-| Bedroom | On a bookshelf or nightstand | Near the center of the room at mid-height |
-| Bathroom | On a shelf or mounted to the wall | Avoid placement near large mirrors (signal reflection) |
-| Living Room | On a media console or shelf | Central location |
+| Room | Node Placement | Notes |
+|------|----------------|-------|
+| Kitchen | Plugged into a counter outlet | Central to the room, away from major metal appliances |
+| Bedroom | Plugged into an outlet near the bed | Near the center of the room, mid-height shelf is ideal |
+| Bathroom | Plugged into a GFCI outlet | Avoid placement directly behind large mirrors |
+| Living Room | Plugged near the media console | Central location with clear line-of-sight |
 | Hallway / Transition Zone | Optional; near doorways | Helps detect room transitions faster |
 
-A typical home requires **4–6 beacons** for reliable coverage.
+A typical home requires **4–6 scanner nodes** for reliable coverage.
 
 ## Accuracy Considerations
 
-- **Wall material matters.** Drywall is nearly transparent to BLE; concrete and metal significantly attenuate signals. Homes with unusual construction may require additional calibration or beacon density.
-- **Interference.** Other Bluetooth devices (speakers, headphones, smart home devices) can introduce noise. The fingerprinting algorithm should use a rolling average of RSSI values rather than instantaneous readings.
-- **Scan delay.** WearOS aggressively throttles background BLE scanning (see [Wearable App](Wearable%20App.md)). With intermittent scan windows, room transitions may be detected with a delay of up to ~50 seconds in the worst case. The server-side room assignment logic must account for this latency.
-- **Multi-floor homes.** BLE signals penetrate floors, which can cause ambiguity between rooms directly above/below each other. Multi-floor homes need significantly more beacons and floor-specific calibration — this is a hard problem, not a minor edge case.
+- **Wall material matters.** Drywall is nearly transparent to BLE; concrete, brick, and metal significantly attenuate signals. Homes with heavy construction may require additional nodes or custom calibration.
+- **Wi-Fi Coverage.** Each ESP32 scanner node requires a stable connection to the home Wi-Fi to report RSSI values. Rooms with weak Wi-Fi signal might experience delayed or lost location reports.
+- **Latency.** Since the ESP32 scanner nodes are wall-powered, they scan continuously and report RSSI values multiple times per second. Room transitions are resolved on the Cloud Backend within **1–3 seconds**, a significant improvement over watch-scanning latency (which can be up to 50 seconds due to WearOS scan throttling).
+- **Multi-floor homes.** BLE signals penetrate floors, which can cause ambiguity between rooms directly above/below each other. Multi-floor homes need nodes placed strategically to maximize distance between vertical lines and floor-specific calibration.
 
 ## References
 
@@ -98,5 +101,6 @@ A typical home requires **4–6 beacons** for reliable coverage.
 ## Related Documents
 
 - [System Architecture](System%20Architecture.md) — How positioning fits into the system
-- [Wearable App](Wearable%20App.md) — The watch-side BLE scanning implementation
-- [Hardware Guide](../guides/Hardware%20Guide.md) — Beacon purchasing recommendations
+- [Wearable App](Wearable%20App.md) — Smartwatch BLE advertising details
+- [Cloud Backend](Cloud%20Backend.md) — The backend resolving location telemetry
+- [Hardware Guide](../guides/Hardware%20Guide.md) — ESP32 purchasing recommendations

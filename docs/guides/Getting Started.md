@@ -1,15 +1,12 @@
 # Getting Started
 
-This guide walks caregivers through setting up HelperWatch in their home, from hardware acquisition to a working system.
-
-<!-- TODO: This guide will be fully detailed once the software reaches a usable prototype (Phase 3-4). The current content describes the intended setup experience and hardware requirements. -->
+This guide walks caregivers through setting up HelperWatch in their home, from hardware setup to a running system.
 
 ## What You Need
 
-### 1. A Smartwatch (~$35–80)
+### 1. A Smartwatch (~$35–100)
 
 Any budget Android or WearOS smartwatch with:
-
 - Wi-Fi
 - Bluetooth
 - Microphone and speaker
@@ -18,80 +15,67 @@ Any budget Android or WearOS smartwatch with:
 
 See [Hardware Guide](Hardware%20Guide.md) for specific recommendations.
 
-### 2. Room Beacons (~$3–15 per room)
+### 2. Room Scanner Nodes (~$3–4 per room)
 
-Small devices placed in each room to track your child's location. You need one per room (typically 4–6 for a standard home).
+Small microcontroller boards (ESP32) placed in each room (typically 4–6 nodes for a standard home). They are plugged into standard USB wall outlets and scan for your child's watch.
 
-**Choose one:**
-- **ESP32 boards** (~$3–4 each) — Plug into USB wall chargers. Requires a one-time firmware flash.
-- **Commercial BLE beacons** (~$10–15 each) — Stick to the wall. No setup required.
+See [Hardware Guide](Hardware%20Guide.md) for purchasing recommendations.
 
-See [Hardware Guide](Hardware%20Guide.md) for purchasing links and setup instructions.
+### 3. A HelperWatch Cloud Account
 
-### 3. A Home Computer
-
-HelperWatch runs on your existing home computer. No special hardware is needed.
-
-- **Windows** PC or laptop (Intel i5 or better recommended)
-- **Mac** (any Apple Silicon Mac is ideal)
-- **Linux** PC (community-supported)
-- Or a **Raspberry Pi 5** as a dedicated hub (~$35)
-
-See [Hardware Guide](Hardware%20Guide.md) for performance expectations by hardware tier.
+A secure account on the HelperWatch platform to manage routines, scripts, and connect devices.
 
 ### 4. A Smartphone
 
 For the caregiver mobile app (Android or iOS).
 
-### 5. Home Wi-Fi
+### 5. Home Wi-Fi with Internet
 
-A standard home Wi-Fi network. No internet connection is required for core functionality (the system runs entirely on your local network).
+Required for the smartwatch, smartphone, and ESP32 scanner nodes to connect to the Cloud Backend.
+
+---
 
 ## Setup Overview
 
-### Step 1: Install the Server Hub
+### Step 1: Create a HelperWatch Cloud Account
 
-<!-- TODO: Download links and platform-specific instructions will be added at release. -->
+1. Download the HelperWatch caregiver app on your smartphone (Android or iOS) or visit the HelperWatch portal.
+2. Sign up for a caregiver account. This registers your secure database in the cloud.
 
-1. Download the HelperWatch installer for your computer (Windows `.exe` or Mac `.dmg`).
-2. Run the installer. The application handles all dependencies automatically.
-3. Launch HelperWatch. The app will benchmark your computer and download the appropriate AI model.
+### Step 2: Flash and Set Up Room Scanner Nodes
 
-### Step 2: Set Up Room Beacons
+1. Connect an ESP32 board to your computer or phone using a USB cable.
+2. Open the browser-based **HelperWatch web flasher tool** (which uses WebUSB/WebSerial).
+3. Enter your home Wi-Fi name/password and your HelperWatch account pairing token.
+4. Click **"Flash Board."** The tool will upload the firmware and pair the node with your account automatically.
+5. Unplug the board, place it in the room you wish to track, and plug it into a USB wall charger.
+6. Repeat this process for each room node.
 
-1. Place one beacon in each room you want to track.
-2. Power them on (USB for ESP32, or activate commercial beacons).
-3. In the HelperWatch server app, click **"Scan for Beacons."**
-4. Assign a room name to each detected beacon.
+### Step 3: Register and Calibrate Rooms
 
-### Step 3: Calibrate Room Positioning
-
-1. Take the smartwatch to each room.
-2. In the app, tap **"I'm in [Room Name]"** while standing in that room.
-3. Repeat for each room. This creates a signal map for accurate room detection.
+1. Open the caregiver mobile app on your smartphone.
+2. In settings, you will see a list of paired scanner nodes. Assign a friendly room name to each node (e.g., "Kitchen", "Bathroom", "Leo's Bedroom").
+3. Walk to each room with the child's smartwatch, open the calibration screen, and tap **"Calibrate [Room Name]"** while standing in that room. The system will record baseline BLE signals.
 
 ### Step 4: Pair the Smartwatch
 
-1. Install the HelperWatch watch app on the smartwatch.
-2. Connect the watch to your home Wi-Fi network.
-3. In the server hub app, click **"Scan for Watch."** A 6-digit pairing code will appear.
-4. Enter the pairing code on the watch.
+1. Install the HelperWatch watch app on the child's smartwatch.
+2. Open the watch app. A 6-digit pairing code will be displayed.
+3. In the caregiver mobile app on your phone, tap **"Add Wearable"** and enter the pairing code. The watch will now begin advertising its BLE ID and connect to your account over WSS.
 
-### Step 5: Install the Mobile App
+### Step 5: Configure Routines
 
-1. Download the HelperWatch caregiver app on your phone (Android or iOS).
-2. Open the app while connected to your home Wi-Fi.
-3. The app will automatically discover the server hub on your network.
+1. Set up daily routines (morning, bedtime, mealtimes, etc.) in the caregiver mobile app.
+2. Customize the AI's tone, voice prompting style, and scripting rules.
+3. Review and approve the prompt templates that the AI classifier will select from.
 
-### Step 6: Configure Routines
+### Step 6: Start Monitoring
 
-1. Set up your child's daily routines (morning, bedtime, mealtimes, etc.) using the server hub or mobile app.
-2. Customize the AI's voice, tone, and prompting style.
-3. Review and approve the script set that the AI will use for verbal cues.
+1. Place the smartwatch on your child.
+2. Ensure they are wearing their Bluetooth earbuds (if default privacy mode is selected).
+3. Monitor room transitions, heart rate metrics, and current task steps in real-time on your mobile app dashboard.
 
-### Step 7: Start Using HelperWatch
-
-Place the watch on your child and monitor from the mobile app. Start with supervised sessions to calibrate your comfort level and the system's accuracy.
+---
 
 ## Important: Read Before Using
 
@@ -107,5 +91,7 @@ See the [FAQ](FAQ.md) for common questions and troubleshooting.
 
 ## Related Documents
 
-- [Hardware Guide](Hardware%20Guide.md) — Detailed hardware recommendations and purchasing
-- [System Architecture](../design/System%20Architecture.md) — How the system works technically
+- [Hardware Guide](Hardware%20Guide.md) — Detailed hardware recommendations and purchasing links
+- [System Architecture](../design/System%20Architecture.md) — Technical component overview
+- [Cloud Backend](../design/Cloud%20Backend.md) — How data is managed in the cloud
+
