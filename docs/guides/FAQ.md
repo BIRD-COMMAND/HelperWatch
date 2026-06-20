@@ -4,7 +4,7 @@
 
 ### What is HelperWatch?
 
-HelperWatch is an open-source cognitive scaffolding system for severely impacted special needs children. It uses a smartwatch, room-scanner nodes, and a secure Cloud Backend to provide real-time, location-aware verbal cues, behavioral monitoring, and caregiver notifications — using on-device speech-to-text to protect your family's privacy.
+HelperWatch is an open-source cognitive scaffolding system for severely impacted special needs children. It uses a smartwatch, room-scanner nodes, and a secure Cloud Backend to provide real-time, location-aware verbal cues, behavioral monitoring, and caregiver notifications — with strict privacy protections including encrypted audio transit and immediate deletion.
 
 ### Who is HelperWatch designed for?
 
@@ -20,13 +20,13 @@ No. HelperWatch is an assistive technology tool, not a medical device. It does n
 
 **Yes, by design.** The system utilizes a secure Cloud Backend to sync routines, coordinate AI routing, and deliver caregiver status updates. 
 
-However, HelperWatch is designed with a strict **privacy-by-design** posture. All speech-to-text (STT) transcription occurs **directly on the smartwatch** using a lightweight local model (Moonshine). Only resulting text transcripts are sent to the cloud, meaning **raw audio never leaves the smartwatch and is never sent over the network**. Transcripts sent to the Cloud Backend are processed in-memory and deleted immediately. Caregivers also have full control to toggle historical logs off entirely.
+However, HelperWatch is designed with a strict **privacy-by-design** posture. The watch streams encrypted audio to the Cloud Backend for transcription using a managed STT API (Whisper via Groq). **Raw audio is processed in-memory and deleted immediately after transcription** — it is never written to persistent storage. Transcripts are processed transiently through the LLM classifier and deleted immediately after cue selection. Caregivers also have full control to toggle historical logs off entirely.
 
 See: [Privacy and Data Sovereignty](../ethics/Privacy%20and%20Data%20Sovereignty.md)
 
 ### Is audio recorded and stored?
 
-No audio files are recorded or sent over the network. The smartwatch microphone captures audio strictly for real-time transcription on-device, and the audio buffer is purged immediately after transcription. Only text transcripts are sent to the Cloud Backend, and those are processed transiently and deleted from memory instantly unless the caregiver has enabled logging for clinical trend reporting.
+No audio files are recorded or stored. The smartwatch microphone captures audio and streams it encrypted (TLS) to the Cloud Backend for real-time transcription. Raw audio is processed in-memory and deleted immediately after transcription — no audio is ever stored at rest. Only text transcripts are sent onward to the LLM classifier, and those are processed transiently and deleted from memory instantly unless the caregiver has enabled logging for clinical trend reporting.
 
 ### What about other people in the room?
 

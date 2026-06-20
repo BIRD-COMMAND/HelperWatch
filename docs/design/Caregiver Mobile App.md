@@ -73,7 +73,7 @@ Non-critical status updates (routine completed, task step advanced) are availabl
 
 **React Native + Expo** — Write the UI once in TypeScript, compile to native Android and iOS apps. Expo provides a managed build pipeline that simplifies distribution.
 
-> **Note:** The WearOS watch app is built natively in Kotlin (React Native does not support WearOS). Logic-layer code (data models, protocol definitions) can be shared between the watch and mobile apps via Kotlin Multiplatform (KMP), but the UI and platform layers are separate codebases.
+> **Note:** The WearOS watch app is built natively in Kotlin (React Native does not support WearOS). The watch app and mobile app are entirely separate codebases that communicate through the shared Cloud Backend API.
 
 ## Network Communication
 
@@ -81,7 +81,7 @@ Non-critical status updates (routine completed, task step advanced) are availabl
 
 The mobile app connects directly to the Cloud Backend over secure WebSocket (WSS) and HTTPS protocols. 
 
-Because the backend is hosted at a public domain, **remote access is supported natively**. Caregivers can monitor their child from anywhere—whether they are in the backyard, at work, or if the child is out with a respite caregiver—without requiring complex local networks, home routing setups, or peer-to-peer VPN configurations (like mDNS, Tailscale, or UDP broadcasts).
+Because the backend is hosted at a public domain, **remote access is supported natively**. Caregivers can monitor their child from anywhere—whether they are in the backyard, at work, or if the child is out with a respite caregiver—without requiring complex local networks, home routing setups, or peer-to-peer VPN configurations.
 
 Device provisioning is done by logging into the caregiver account and entering a pairing code displayed on the smartwatch or flashing ESP32 boards using a browser tool.
 

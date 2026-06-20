@@ -21,7 +21,7 @@ Each risk is classified by mitigation status:
 **The risk:** If raw data (room tracking, emotional states, audio recordings of a vulnerable minor in their own home) reaches a public cloud or a leaked database, it is a catastrophic violation of the child's dignity and safety. Attackers could listen into the home. Corporations could profile a disabled child's behavioral vulnerabilities.
 
 **Mitigation:**
-- **On-watch speech-to-text.** The smartwatch transcribes all voice audio locally. Raw audio never leaves the smartwatch, avoiding the risk of cloud audio interception or leaks.
+- **Encrypted cloud transcription with immediate deletion.** The watch streams encrypted audio to the Cloud Backend for transcription. Raw audio is processed in-memory and deleted immediately after transcription — never written to persistent storage. This eliminates the risk of audio archives being breached.
 - **Transient processing.** The Cloud Backend processes text transcripts in memory and discards them immediately after cue classification.
 - **Strict encryption.** All telemetry data (biometrics, transcripts) is encrypted in transit using secure WebSockets (WSS/TLS). Database entries are encrypted at rest.
 - **Caregiver log controls.** Caregivers can turn logging off entirely, preventing the creation of any persistent behavioral logs in the cloud.
@@ -66,7 +66,7 @@ See: [Cloud Backend — Deterministic Guardrails](../design/Cloud%20Backend.md)
 **The risk:** The watch microphone captures everything in its physical radius. Neighbors visiting, siblings discussing personal matters, telehealth sessions — all are recorded, transcribed, and parsed by a machine without the bystander's knowledge or consent.
 
 **Mitigation:**
-- **On-watch transcription and immediate deletion.** Raw audio is transcribed on-device and instantly destroyed. No audio recordings are ever stored or sent to the cloud.
+- **Immediate audio deletion.** Audio streamed to the Cloud Backend is transcribed in memory and deleted immediately — no audio recordings are ever stored at rest, eliminating the risk of audio archives being breached or reviewed.
 - **Privacy zones.** Caregivers can designate rooms or time windows where audio capture is paused.
 - **Quick-mute gesture.** Tapping the watch face pauses audio processing for a configurable duration.
 - **Caregiver education.** Documentation clearly instructs caregivers to inform visitors that audio monitoring is active.

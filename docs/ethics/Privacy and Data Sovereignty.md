@@ -4,7 +4,7 @@
 
 Privacy is not a feature — it is a hard-coded architectural requirement. HelperWatch is designed so that all sensitive data is handled with a strict **privacy-by-design** cloud posture:
 
-- **Raw audio remains local:** Speech-to-text (STT) transcription occurs directly on the smartwatch. Raw audio is never sent over the network or saved to disk.
+- **Encrypted audio transit:** The watch streams audio encrypted (TLS) to the Cloud Backend for transcription. Audio is processed transiently in-memory and deleted immediately after transcription. No audio is ever stored at rest.
 - **Transient processing:** Text transcripts, biometrics, and signal reports are held transiently in-memory on the Cloud Backend during the AI prompting loop and deleted immediately after.
 - **Encrypted storage:** Account data and routine logs (if enabled) are encrypted at rest.
 - **Caregiver sovereignty:** The caregiver has absolute control to disable logging, export records, or delete all cloud records instantly.
@@ -19,16 +19,17 @@ Audio is the most sensitive data the system handles. It captures not only the ch
 
 **Lifecycle:**
 
-1. The watch microphone captures audio and transcribes it on-device using a lightweight STT model (Moonshine).
-2. **Raw audio is deleted immediately from memory on the watch.** It is never written to persistent storage and never sent over the network.
-3. The resulting text transcript is encrypted and transmitted via secure WebSocket (WSS) to the Cloud Backend.
-4. The Cloud Backend processes the transcript transiently in-memory through the LLM.
+1. The watch microphone captures audio and streams it encrypted (TLS) to the Cloud Backend over a persistent WSS connection.
+2. The Cloud Backend transcribes the audio using a managed STT API (Whisper via Groq).
+3. **Raw audio is processed in-memory and deleted immediately after transcription.** Audio is never written to persistent storage on any server.
+4. The Cloud Backend processes the resulting text transcript transiently in-memory through the LLM classifier.
 5. The transcript is immediately deleted from memory after cue selection, unless the caregiver has enabled historical logging for trend reporting.
 
 **Hard rules:**
-- Raw audio is never written to persistent storage on any device.
-- Raw audio is never transmitted to the cloud or local network.
-- Transcription happens entirely on the smartwatch.
+- Raw audio is never written to persistent storage on any device or server.
+- Raw audio is never retained after transcription is complete.
+- Raw audio is encrypted in transit using TLS.
+- No audio recordings are ever stored at rest.
 
 ### Biometric Data
 
@@ -76,7 +77,7 @@ A microphone worn on a child's wrist captures everything in its physical radius.
 
 ### Mitigations
 
-- **On-device audio deletion.** Raw audio is discarded on the watch the moment transcription is complete. No audio archive exists to be breached or reviewed.
+- **Immediate audio deletion.** Audio streamed to the Cloud Backend is transcribed in memory and deleted immediately. No audio recordings are ever stored at rest, eliminating the risk of audio archives being breached or reviewed.
 - **Privacy zones.** Caregivers can define rooms or times where audio capture and transcription are paused entirely on the watch.
 - **Quick-mute.** A physical gesture on the watch (e.g., double-tap the face) pauses audio processing for a configurable duration (e.g., 30 minutes).
 - **Earbud-first default.** The system defaults to private audio output through earbuds, reducing the chance that bystanders become aware of and uncomfortable with the monitoring.
@@ -104,4 +105,3 @@ The public-facing documentation must clearly communicate that:
 - [Risks and Mitigations](Risks%20and%20Mitigations.md) — Risk register including data sovereignty mitigations
 - [Cloud Backend](../design/Cloud%20Backend.md) — Where data processing happens
 - [FAQ](../guides/FAQ.md) — Common privacy questions
-

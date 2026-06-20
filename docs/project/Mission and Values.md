@@ -25,7 +25,7 @@ The system must be financially and technically reachable for any family. This me
 
 ### Ethical Safety by Design
 
-Privacy is not a feature — it is a hard-coded requirement. The system is built around on-device speech-to-text (Moonshine STT), strict cloud data minimization, transit encryption, transient cloud memory processing, and transparent, educator-led risk mitigation. Every architectural decision must pass the test: "If this technology were used by someone with bad intentions, what would it enable?" — and the answer must be "as little as possible."
+Privacy is not a feature — it is a hard-coded requirement. The system is built around encrypted cloud transcription with immediate audio deletion, strict cloud data minimization, transit encryption, transient cloud memory processing, and transparent, educator-led risk mitigation. Every architectural decision must pass the test: "If this technology were used by someone with bad intentions, what would it enable?" — and the answer must be "as little as possible."
 
 ## What HelperWatch Is — and What It Is Not
 

@@ -16,50 +16,59 @@ The project is in its earliest stage: defining the mission, documenting the arch
 - Identify target hardware (smartwatches, ESP32 development boards).
 - Produce public-facing education materials on safety and privacy.
 
-### Phase 1: Room Positioning Prototype
+### Phase 1: Vertical Slice — Room Detection
 
-- Set up a test environment with wall-powered ESP32 scanner nodes and a smartwatch BLE advertising test script.
-- Develop ESP32 scanner node firmware to scan for the watch and connect to Wi-Fi.
-- Develop and validate RSSI-based room resolution logic on a prototype backend.
-- Achieve >90% room-level accuracy in a standard home layout with sub-3 second transition latency.
+The first end-to-end integration milestone. Build the minimum stack needed to answer: *"What room is the child in?"*
 
-### Phase 2: Cloud Backend (MVP)
+- Develop ESP32 scanner node firmware (BLE scan + Wi-Fi RSSI reporting).
+- Stand up a minimal Cloud Backend (Node.js/TypeScript) with the RSSI telemetry endpoint and room resolution logic.
+- Build a minimal mobile UI (React Native + Expo) that displays the child's current room name in real-time.
+- Implement ESP32 provisioning: WebUSB/WebSerial flashing with Wi-Fi credentials and per-account API key.
+- Implement caregiver account creation and ESP32 node registration.
+- Validate >90% room-level accuracy in a test home with sub-3 second transition latency.
 
-- Set up secure cloud hosting, database schemas, and API routers.
-- Implement WebSocket (WSS) and HTTPS endpoints for watch, mobile, and ESP32 telemetry.
-- Integrate Cloud LLM APIs (e.g. Groq, OpenAI) for selecting verbal cues.
-- Build device provisioning, pairing codes, and caregiver account management APIs.
-- Establish transient data pipeline: transient in-memory LLM context, automated logs cleanup, database encryption at rest.
+**Exit criteria:** A caregiver can open the mobile app and see the child's room update in real-time as the child moves through the house.
 
-### Phase 3: Wearable App (MVP)
+### Phase 2: Vertical Slice — Prompting Loop
 
-- Develop the native Kotlin/Jetpack Compose for Wear OS background service for:
-  - Native, low-power BLE advertising (broadcasting BLE packets continuously).
-  - On-device speech-to-text (STT) using Moonshine STT (voice activity detection, local transcription).
-  - Telemetry capture (heart rate, accelerometer) and transmission to Cloud Backend over Wi-Fi.
-  - Playback of verbal cues.
-- Validate battery life under real usage conditions (target: 12-16+ hours of continuous usage).
-- Pair with the Cloud Backend and validate end-to-end prompting loop.
+The core product loop, tested end-to-end. Build the minimum stack needed to answer: *"Can the system hear the child, understand their context, and deliver the right prompt?"*
 
-### Phase 4: Caregiver Mobile App (MVP)
+- Develop the WearOS background service (Kotlin/Jetpack Compose):
+  - BLE advertising (broadcasting unique identifier).
+  - Audio capture and encrypted streaming to Cloud Backend over WSS.
+  - Telemetry capture (heart rate, accelerometer) and WSS transmission.
+  - Verbal cue playback (speaker and earbud modes).
+- Extend the Cloud Backend:
+  - Watch telemetry WSS endpoint.
+  - Cloud STT integration (Whisper via Groq) for server-side transcription.
+  - LLM classifier/router integration (Groq primary, OpenAI fallback).
+  - Basic routine storage and prompt selection.
+  - Device pairing (6-digit code flow for watch).
+- Extend the mobile app:
+  - Status-at-a-glance view (room + active routine + last cue).
+  - Watch pairing UI.
+- Validate battery life under real usage conditions (target: 12–16+ hours).
 
-- Build the React Native + Expo mobile app with:
-  - Status-at-a-glance dashboard (location, active routine, biometric state).
-  - Push-to-talk intercom mode for parent-to-AI command injection.
-  - Macro routine triggers (bedtime, leaving the house, cool-down).
-  - Cloud pairing flows for ESP32 nodes and WearOS smartwatch.
+**Exit criteria:** A caregiver can configure a simple routine, the child speaks, and the watch plays the correct prompt based on room, speech, and routine context — with the caregiver seeing status updates in the mobile app.
 
-### Phase 5: Behavioral Intelligence
+### Phase 3: Core Product Build-Out
 
-- Implement deterministic guardrails for AI output (parent-approved script selection).
-- Build the dynamic fading system to reduce prompts as mastery is demonstrated.
-- Develop the micro-affirmation engine for positive reinforcement.
-- Add biometric meltdown intercept logic (heart rate spike + accelerometer pacing detection).
+With the vertical slices validated, build out the full product feature set:
 
-### Phase 6: Polish, Testing, & Community Launch
+- **Routine Engine:** Full routine/schedule management, step-by-step checklists, macro triggers (bedtime, leaving the house, cool-down).
+- **Dynamic Fading:** Reduce prompt frequency as the child demonstrates mastery.
+- **Meltdown Intercept:** Heart rate spike + accelerometer pacing detection → calming cue + caregiver push notification.
+- **Micro-Affirmations:** Positive reinforcement engine for task step completions.
+- **Push-to-Talk Intercom:** Parent speaks a command; AI integrates it into the next cue.
+- **Trend Reporting:** Historical data visualization (room timelines, task durations, biometric patterns).
+- **ESP32 OTA Updates:** Firmware update mechanism via Cloud Backend.
+- **Caregiver Log Control:** Enable/disable historical logging, on-demand data purging.
+
+### Phase 4: Hardening & Launch
 
 - End-to-end testing with real hardware across multiple home layouts and Wi-Fi conditions.
-- Perform security audits, penetration testing of the Cloud Backend, and WebSocket load testing.
+- Security audit and penetration testing of the Cloud Backend and WebSocket connections.
+- WebSocket load testing (concurrent device connections).
 - Finalize caregiver-facing documentation and setup guides.
 - Public repository launch with contribution guidelines and ethical manifest.
 

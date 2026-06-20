@@ -8,7 +8,7 @@ Key terms used throughout the HelperWatch documentation.
 A low-power wireless communication protocol. The smartwatch broadcasts BLE signals, and room scanner nodes scan for these signals to determine which room the child is in.
 
 **Bystander Privacy**
-The concern that a wearable microphone captures audio from people other than the child — siblings, visitors, therapists — without their knowledge or consent. Mitigated through immediate audio deletion on-device, privacy zones, and quick-mute controls.
+The concern that a wearable microphone captures audio from people other than the child — siblings, visitors, therapists — without their knowledge or consent. Mitigated through encrypted cloud transcription with immediate audio deletion, privacy zones, and quick-mute controls.
 
 **Calm UI**
 A user interface design philosophy (Weiser & Brown, 1997) that minimizes cognitive load by silently monitoring in the background and only demanding the user's attention when truly necessary. The caregiver mobile app follows this principle.
@@ -23,7 +23,7 @@ The conceptual framing of HelperWatch: a system that acts as an external extensi
 Providing structured, step-by-step support to help a person complete tasks they cannot yet manage independently. HelperWatch provides scaffolding through real-time verbal cues, location-aware prompting, and micro-affirmations.
 
 **Data Sovereignty & Minimization**
-The principle that the family's sensitive data is owned and controlled by them. In HelperWatch, this is achieved by performing speech-to-text transcription directly on the smartwatch, encrypting all data in transit, and using a Cloud Backend that processes data transiently in memory without permanent storage.
+The principle that the family's sensitive data is owned and controlled by them. In HelperWatch, this is achieved through encrypted audio transit with immediate deletion after transcription, encrypting all data in transit, and using a Cloud Backend that processes data transiently in memory without permanent storage.
 
 **Deterministic Guardrails**
 Architectural constraints that prevent the AI from generating freeform, unpredictable language. The Cloud Backend acts as a router selecting from parent-approved scripts rather than having creative freedom, preventing hallucinations and unsafe instructions.
@@ -49,8 +49,8 @@ The system's ability to detect early warning signs of emotional dysregulation (b
 **Micro-Affirmation**
 Brief, immediate positive reinforcement delivered by the AI after the child completes a small step. Designed to shift the background noise of the child's day from constant correction to consistent encouragement.
 
-**Moonshine**
-A lightweight, highly optimized speech-to-text (STT) engine that runs directly on the smartwatch to transcribe audio on-device. This ensures raw audio never leaves the wearable, protecting the family's privacy.
+**Cloud STT (Speech-to-Text)**
+Speech-to-text transcription is performed on the Cloud Backend using a managed STT API (Whisper via Groq). The watch streams encrypted audio to the cloud, where it is transcribed in-memory and deleted immediately. No audio is ever stored at rest.
 
 **Privacy Zone**
 A caregiver-configured room or time window where audio capture is automatically paused on the watch, protecting bystander privacy during sensitive situations.

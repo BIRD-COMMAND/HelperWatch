@@ -7,16 +7,17 @@ HelperWatch is a cloud-coordinated cognitive scaffolding system that connects sm
 ```
                      ┌───────────────────────┐
                      │     Cloud Backend     │
-                     │ (APIs, STT Routing,   │
-                     │  LLM Orchestration)   │
+                     │ (Node.js/TypeScript,  │
+                     │  STT + LLM,          │
+                     │  PostgreSQL)          │
                      └───────────┬───────────┘
             ┌────────────────────┼───────────────────┐
             ▼                    ▼                   ▼
      ┌──────────────┐     ┌─────────────┐     ┌──────────────┐
      │  Smartwatch  │     │ ESP32 Room  │     │Mobile App /  │
      │  (BLE adv,   │     │  Scanners   │     │Caregiver UI  │
-     │  On-Watch    │     │ (BLE Scan + │     │(React Native)│
-     │  Moonshine)  │     │   Wi-Fi)    │     └──────────────┘
+     │  audio +     │     │ (BLE Scan + │     │(React Native)│
+     │  telemetry)  │     │   Wi-Fi)    │     └──────────────┘
      └──────────────┘     └─────────────┘
 ```
 
@@ -27,10 +28,10 @@ HelperWatch is a cloud-coordinated cognitive scaffolding system that connects sm
 The child wears a commodity Android or WearOS smartwatch running a native Kotlin background service (Jetpack Compose for Wear OS). The watch is responsible for:
 
 - **BLE advertising** — Continuously broadcasting a unique Bluetooth Low Energy identifier. This is a low-power, native operation that WearOS does not throttle, ensuring stable room detection.
-- **On-device speech-to-text** — Transcribing spoken audio locally on the watch using an embedded lightweight model (Moonshine STT). This ensures raw audio never leaves the smartwatch.
+- **Audio capture and streaming** — Recording spoken audio via the onboard microphone and streaming it encrypted (TLS) to the Cloud Backend over WSS for server-side transcription (Whisper via Groq).
 - **Biometric sampling** — Reading heart rate data from the onboard optical sensor.
 - **Accelerometer monitoring** — Detecting motion patterns (walking, pacing, stillness).
-- **Telemetry transmission** — Transmitting text transcripts, biometrics, and accelerometer states to the Cloud Backend over Wi-Fi.
+- **Telemetry transmission** — Transmitting encrypted audio, biometrics, and accelerometer states to the Cloud Backend over Wi-Fi.
 - **Cue playback** — Playing verbal prompts received from the Cloud Backend through the watch speaker or paired Bluetooth earbuds.
 
 See: [Wearable App](Wearable%20App.md)
@@ -78,7 +79,7 @@ See: [Indoor Positioning](Indoor%20Positioning.md)
 
 ## Device Provisioning and Account Association
 
-HelperWatch eliminates the complexity of local discovery protocols (like mDNS) and remote network tunnels (like Tailscale). Devices communicate with a known cloud address.
+HelperWatch uses direct cloud addressing for all device communication, eliminating the need for local service discovery protocols or remote network tunnels. Devices communicate with a known cloud endpoint.
 
 - **Account Setup:** The caregiver registers a HelperWatch account via the mobile app.
 - **ESP32 Node Pairing:** ESP32 room scanners are flashed with the family's Wi-Fi details and an account token via a web-based flashing tool (using WebUSB/WebSerial).
@@ -89,8 +90,8 @@ HelperWatch eliminates the complexity of local discovery protocols (like mDNS) a
 1. The watch broadcasts its unique BLE advertiser ID.
 2. The ESP32 scanner node in the kitchen detects the watch with a strong RSSI and reports this to the Cloud Backend.
 3. The Cloud Backend resolves that the child has transitioned into the kitchen.
-4. The watch captures spoken audio and transcribes it on-device (Moonshine STT).
-5. The watch transmits the text transcript + biometrics to the Cloud Backend.
+4. The watch captures spoken audio and streams it encrypted to the Cloud Backend.
+5. The Cloud Backend transcribes the audio (Whisper via Groq) and processes the resulting text transcript + biometrics.
 6. The Cloud Backend LLM classifier processes the transcript, active room (kitchen), biometrics, and routine context.
 7. The Cloud Backend selects the corresponding parent-approved prompt script (deterministic guardrails).
 8. The Cloud Backend sends the prompt text back to the watch over WSS.

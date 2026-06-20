@@ -2,9 +2,9 @@
 
 ## Overview
 
-The wearable app is a native Kotlin/Jetpack Compose for Wear OS background service that runs on a commodity smartwatch worn by the child. It acts as the primary sensor platform and the child's direct interface for receiving verbal cues. Under the cloud-first model, the watch performs on-device speech-to-text (STT) and BLE advertising, offloading scanning and prompt orchestration to the ESP32 network and Cloud Backend.
+The wearable app is a native Kotlin/Jetpack Compose for Wear OS background service that runs on a commodity smartwatch worn by the child. It acts as the primary sensor platform and the child's direct interface for receiving verbal cues. Under the cloud-first model, the watch captures audio, streams it encrypted to the Cloud Backend for transcription, and performs BLE advertising — offloading scanning, STT, and prompt orchestration to the ESP32 network and Cloud Backend.
 
-> **Implementation note:** React Native does not have official support for WearOS. The watch app must be built natively in Kotlin using Jetpack Compose for Wear OS. Logic-layer code (data models, protocol handling) may be shared with the caregiver mobile app via Kotlin Multiplatform (KMP), but the UI and sensor-access layers are entirely separate.
+> **Implementation note:** React Native does not have official support for WearOS. The watch app is built natively in Kotlin using Jetpack Compose for Wear OS. The watch app and caregiver mobile app are entirely separate codebases that communicate through the shared Cloud Backend API.
 
 ## Target Hardware
 
@@ -31,14 +31,17 @@ To avoid background scanning limitations and aggressive operating system throttl
 - WearOS natively supports persistent BLE advertising with minimal power consumption, and the operating system does not throttle advertising in the background like it does scanning.
 - This design completely eliminates background scan timeouts, silent background thread deaths, and the associated room transition latency.
 
-### Audio Capture and On-device STT
+### Audio Capture and Cloud STT
 
-To enforce strict data privacy, speech-to-text transcription occurs **directly on the watch**:
+The watch captures audio and streams it to the Cloud Backend for transcription:
 
-- The watch records spoken audio via the onboard microphone.
-- An embedded, lightweight STT engine (such as Moonshine STT) transcribes the captured audio to text in real-time.
-- **Raw audio is deleted immediately from memory after transcription.** Raw audio files never leave the watch and are never transmitted over the network.
-- The resulting text transcript is encrypted and sent to the Cloud Backend.
+1. The watch records spoken audio via the onboard microphone.
+2. Audio is streamed encrypted (TLS) to the Cloud Backend over the persistent WSS connection.
+3. The Cloud Backend transcribes the audio using a managed STT API (Whisper via Groq).
+4. The resulting text transcript enters the transient processing pipeline for LLM classification.
+5. **Raw audio is processed in-memory on the Cloud Backend and deleted immediately after transcription.** Audio is never written to persistent storage.
+
+This approach keeps the watch's role simple (capture and stream) and avoids the significant complexity, battery drain, and hardware compatibility risk of running inference models on budget WearOS devices. Privacy is maintained through encrypted transit, transient in-memory processing, and immediate deletion — the same model used for all other sensitive data in the system.
 
 ### Biometric Sampling
 
@@ -64,7 +67,7 @@ The watch communicates directly with the Cloud Backend over Wi-Fi using a secure
 
 **Telemetry payload** (watch → Cloud Backend):
 - Watch Device ID and session token
-- Text transcript of child's speech
+- Encrypted audio stream (for cloud STT)
 - Heart rate reading
 - Accelerometer motion classification
 - Timestamp
@@ -76,17 +79,16 @@ The watch communicates directly with the Cloud Backend over Wi-Fi using a secure
 
 ## Battery and Power Considerations
 
-In line with the design philosophy of these types of wearables, we utilize low-power BLE advertising rather than active background scanning. As a result, we can expect a **12–16+ hour battery life** under normal caregiving conditions.
+By keeping the watch's role to BLE advertising, audio streaming, and sensor telemetry — with no on-device inference — we expect **12–16+ hours of battery life** under typical caregiving conditions.
 
 **Key optimizations:**
 - **BLE Advertising:** BLE advertising has a negligible power footprint compared to continuous or intermittent BLE scanning.
-- **On-device STT Duty Cycle:** The STT engine is kept asleep and is only triggered when voice activity detection (VAD) detects speech, or when a routine checklist step is active.
-- **Wi-Fi telemetry batching:** Biometric and accelerometer telemetry is batched and transmitted every 5–10 seconds unless a text transcript or critical event needs immediate delivery.
+- **Audio Duty Cycle:** Audio capture and streaming is gated by voice activity detection (VAD) and only activates when speech is detected or a routine checklist step is active. The microphone and Wi-Fi radio are idle between speech events.
+- **Wi-Fi telemetry batching:** Biometric and accelerometer telemetry is batched and transmitted every 5–10 seconds unless a critical event needs immediate delivery.
 
 ## Related Documents
 
 - [System Architecture](System%20Architecture.md) — How the watch fits into the overall system
-- [Cloud Backend](Cloud%20Backend.md) — The cloud services handling telemetry and scripts
+- [Cloud Backend](Cloud%20Backend.md) — The cloud services handling STT, telemetry, and scripts
 - [Indoor Positioning](Indoor%20Positioning.md) — ESP32 room scanning logic
-- [Privacy and Data Sovereignty](../ethics/Privacy%20and%20Data%20Sovereignty.md) — On-watch data handling rules
-
+- [Privacy and Data Sovereignty](../ethics/Privacy%20and%20Data%20Sovereignty.md) — Data handling rules

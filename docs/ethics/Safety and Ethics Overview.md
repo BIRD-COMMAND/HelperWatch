@@ -20,7 +20,7 @@ These are hard lines. They are not features to be toggled or negotiated. Any con
 
 ### 1. Data Sovereignty & Minimization
 
-To protect the family's privacy, speech-to-text transcription occurs directly on the smartwatch using an embedded local model (Moonshine STT). Only resulting text transcripts are sent to the Cloud Backend for LLM processing. All cloud processing is transient, deleting transcripts immediately from memory after processing. No raw audio ever leaves the watch, and no data is stored permanently on our servers unless explicitly opted into by the caregiver.
+To protect the family's privacy, audio captured by the watch is streamed encrypted (TLS) to the Cloud Backend for transcription using a managed STT API (Whisper via Groq). Raw audio is processed in-memory and deleted immediately after transcription — never stored at rest. All cloud processing is transient, and no data is stored permanently on our servers unless explicitly opted into by the caregiver.
 
 See: [Privacy and Data Sovereignty](Privacy%20and%20Data%20Sovereignty.md)
 
@@ -46,7 +46,7 @@ Public-facing documentation of all risks, mitigations, and design trade-offs is 
 
 Every identified risk is documented with its mitigation status in [Risks and Mitigations](Risks%20and%20Mitigations.md). Risks fall into three categories:
 
-1. **Fully mitigatable** — Addressed through architecture and design (e.g., on-device transcription and transient cloud memory processing neutralize raw audio leakage risk).
+1. **Fully mitigatable** — Addressed through architecture and design (e.g., encrypted transit, transient cloud memory processing, and immediate audio deletion neutralize raw audio leakage risk).
 2. **Partially mitigatable** — Reduced through design but requiring caregiver awareness (e.g., bystander privacy, stigma).
 3. **Design-philosophy-only** — Cannot be eliminated through code; mitigated through education, documentation, and intended-use framing (e.g., loss of human intuition, over-reliance).
 

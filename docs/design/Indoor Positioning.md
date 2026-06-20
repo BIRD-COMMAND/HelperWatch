@@ -63,14 +63,14 @@ HelperWatch uses standard, off-the-shelf ESP32 or ESP32-C3 development boards (e
 
 **Setup:**
 1. Plug the ESP32 board into a standard USB wall charger in each room.
-2. Flash the board with the HelperWatch scanner firmware using a web-based flashing tool (WebUSB/WebSerial).
-3. Connect the board to the home Wi-Fi network and register it under the caregiver account during setup.
+2. Flash the board with the HelperWatch scanner firmware using a web-based flashing tool (WebUSB/WebSerial). During flashing, the tool writes the home Wi-Fi credentials and a per-account API key into the firmware.
+3. On boot, the ESP32 connects to Wi-Fi and authenticates with the Cloud Backend using its API key to register under the caregiver's account.
 
 **Pros:**
 - Extremely cheap (~$3–4 per room).
 - Wall-powered (no battery replacements or maintenance).
 - Scans continuously (100% duty cycle) for instant transition detection.
-- Upgradable over-the-air (OTA) or via USB.
+- Firmware-updatable over-the-air (OTA): each node checks for updates on boot and on a daily schedule, downloading signed firmware binaries from the Cloud Backend (see [Cloud Backend — OTA](Cloud%20Backend.md)).
 
 Because commercial BLE tags can only broadcast and cannot scan or connect to Wi-Fi, they are not compatible with this flipped architecture. The ESP32 scanner node is the required positioning hardware.
 
@@ -92,6 +92,10 @@ A typical home requires **4–6 scanner nodes** for reliable coverage.
 - **Wi-Fi Coverage.** Each ESP32 scanner node requires a stable connection to the home Wi-Fi to report RSSI values. Rooms with weak Wi-Fi signal might experience delayed or lost location reports.
 - **Latency.** Since the ESP32 scanner nodes are wall-powered, they scan continuously and report RSSI values multiple times per second. Room transitions are resolved on the Cloud Backend within **1–3 seconds**, providing a highly responsive system.
 - **Multi-floor homes.** BLE signals penetrate floors, which can cause ambiguity between rooms directly above/below each other. Multi-floor homes need nodes placed strategically to maximize distance between vertical lines and floor-specific calibration.
+
+## Security
+
+Each ESP32 scanner node authenticates with the Cloud Backend using a **per-account API key** burned into the firmware during the WebUSB provisioning step. The Cloud Backend validates this key on every connection to ensure only authorized nodes can report RSSI data to a caregiver's account. API keys can be revoked by the caregiver via the mobile app if a node is lost or compromised.
 
 ## References
 
