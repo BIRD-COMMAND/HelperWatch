@@ -55,6 +55,8 @@ Explore the HelperWatch wiki directory to learn more:
 - [Wearable App Design](docs/design/Wearable%20App.md) — WearOS background service, BLE advertising, and audio streaming.
 - [Caregiver Mobile App Design](docs/design/Caregiver%20Mobile%20App.md) — User interface design patterns (Calm UI) and features.
 - [Indoor Positioning Logic](docs/design/Indoor%20Positioning.md) — RSSI room resolution algorithm and scanner placement guidelines.
+- [Behavioral Use Cases](docs/design/Behavioral%20Use%20Cases.md) — Real-world behavioral scenarios, user stories, and feature requirements.
+- [Adaptive Response Architecture](docs/design/Adaptive%20Response%20Architecture.md) — Child profiles, response protocol engine, context-aware decision logic, and setup process.
 
 ### 3. Safety, Privacy & Ethics
 - [Safety and Ethics Overview](docs/ethics/Safety%20and%20Ethics%20Overview.md) — Ethical framework of the project.

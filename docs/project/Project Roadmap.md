@@ -53,22 +53,72 @@ The core product loop, tested end-to-end. Build the minimum stack needed to answ
 
 ### Phase 3: Core Product Build-Out
 
-With the vertical slices validated, build out the full product feature set:
+With the vertical slices validated, build out the full product feature set. Phase 3 is the largest development phase, organized into five workstreams informed by the [Behavioral Use Cases](../design/Behavioral%20Use%20Cases.md) and [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md).
 
-- **Routine Engine:** Full routine/schedule management, step-by-step checklists, macro triggers (bedtime, leaving the house, cool-down).
-- **Dynamic Fading:** Reduce prompt frequency as the child demonstrates mastery.
-- **Meltdown Intercept:** Heart rate spike + accelerometer pacing detection → calming cue + caregiver push notification.
-- **Micro-Affirmations:** Positive reinforcement engine for task step completions.
-- **Push-to-Talk Intercom:** Parent speaks a command; AI integrates it into the next cue.
-- **Trend Reporting:** Historical data visualization (room timelines, task durations, biometric patterns).
-- **ESP32 OTA Updates:** Firmware update mechanism via Cloud Backend.
-- **Caregiver Log Control:** Enable/disable historical logging, on-demand data purging.
+#### 3A: Child Profile System
+
+Build the profile infrastructure that personalizes the system for each child.
+
+- **Profile data model:** Implement the child profile specification — communication, sensory, executive function, emotional regulation, behavioral, and interaction preference sections.
+- **Template profiles:** Pre-built starting configurations for common presentations (non-verbal/severe executive dysfunction, verbal/impulsive/attention-seeking, verbal/anxious/perseverative, limited verbal/sensory-sensitive).
+- **Progressive complexity:** Day-one minimum viable profile (name, communication mode, working memory, one routine) with guided expansion over time.
+- **Profile management UI:** Caregiver mobile app screens for creating, editing, and managing child profiles.
+
+#### 3B: Response Protocol Engine
+
+Build the context-aware decision system that selects appropriate responses.
+
+- **Protocol structure:** Implement the five-part protocol model (trigger → context qualifier → response action → escalation rules → exit condition).
+- **Context evaluation model:** Current state assessment (real-time biometric + behavioral composite), day quality score (rolling daily accumulator), and recent event buffer (short-term memory with time decay).
+- **Protocol categories:** Echolalia response, perseveration response, attention/engagement, transition, task re-engagement, routine scaffolding, meltdown arc (build-up/peak/recovery), sensory overload, conflict, and bedtime protocols.
+- **Protocol priority and conflict resolution:** 9-level priority hierarchy with suspension/resumption logic.
+- **Protocol templates:** Pre-built protocol sets that caregivers can customize.
+
+#### 3C: Behavioral Response Capabilities
+
+Implement the specific features surfaced by the behavioral use cases.
+
+- **Transcript classification:** Echo detection, repetition detection, scripting recognition, avoidance-bid identification, conflict/distress detection.
+- **Graduated response strategies:** Multi-phase response logic for perseveration, echolalia, and bedtime resistance.
+- **Proactive engagement:** System-initiated check-ins at configurable intervals with contextual follow-up.
+- **Transition scaffolding:** Multi-step countdown warnings, bridging cues, first-step anchoring.
+- **Task re-engagement:** Room-departure detection during routines, pause/resume state management, re-anchoring cues.
+- **Meltdown arc (full cycle):** Rolling-window biometric trend analysis, multi-signal build-up scoring, prompt suppression at peak, recovery detection and buffer, post-meltdown re-engagement.
+- **Sensory shutdown detection:** Silence + stillness + non-responsiveness heuristics with automatic prompt suppression.
+- **Conflict handling:** Multi-voice distress detection, response suppression, caregiver alert with room context.
+- **Bedtime protocols:** Bedtime macro with profile shift, room-exit boundary holding, request classification, graduated firmness, companion/ambient presence mode.
+- **Answer consistency enforcement:** No contradictions across graduated response phases.
+
+#### 3D: Caregiver Mobile App Expansion
+
+Expand the mobile app to support the full profile and protocol system.
+
+- **Child profile management:** Profile creation, editing, and template selection with progressive disclosure UX.
+- **Routine and protocol configuration:** Routine builder, protocol parameter adjustment, response script customization.
+- **Day view / context dashboard:** Real-time visibility into day quality score, recent events, and active protocols.
+- **Setup wizard / guided onboarding:** Facilitated or self-guided profile and routine setup workflow.
+- **Expanded macro triggers:** Protocol-aware macros with custom profile shifts.
+- **Expanded alerts:** Protocol-driven notifications (meltdown build-up, perseveration boundary, shutdown, conflict) with context.
+- **Push-to-Talk intercom:** Parent command injection integrated into the AI cue stream.
+- **Trend reporting:** Expanded historical data — meltdown frequency and precursors, step-level aversion patterns, perseveration trends, day quality score history.
+- **Caregiver log control:** Enable/disable historical logging, on-demand data purging.
+
+#### 3E: Infrastructure
+
+- **Routine engine:** Full routine/schedule management, step-by-step checklists, per-step expected durations, dynamic fading with per-step mastery tracking.
+- **Micro-affirmation library:** Varied positive reinforcement cues (not identical each time).
+- **ESP32 OTA updates:** Firmware update mechanism via Cloud Backend.
+- **Time awareness cues:** Configurable time-context prompts during routines.
+
+**Exit criteria:** A caregiver can set up a child profile (from template or custom), configure routines and protocol parameters, and the system responds to real behavioral scenarios (echolalia, perseveration, transitions, meltdown build-up, task abandonment) with context-appropriate cues — with the caregiver receiving protocol-driven alerts and seeing day-quality context in the app.
 
 ### Phase 4: Hardening & Launch
 
 - End-to-end testing with real hardware across multiple home layouts and Wi-Fi conditions.
 - Security audit and penetration testing of the Cloud Backend and WebSocket connections.
 - WebSocket load testing (concurrent device connections).
+- Profile and protocol configuration usability testing with real caregivers.
+- Multi-child household testing (sibling dynamics, conflict scenarios).
 - Finalize caregiver-facing documentation and setup guides.
 - Public repository launch with contribution guidelines and ethical manifest.
 
@@ -76,4 +126,7 @@ With the vertical slices validated, build out the full product feature set:
 
 - [Mission and Values](Mission%20and%20Values.md) — Why the project exists
 - [System Architecture](../design/System%20Architecture.md) — Technical component overview
+- [Behavioral Use Cases](../design/Behavioral%20Use%20Cases.md) — Behavioral scenarios driving Phase 3 features
+- [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md) — Child profiles and protocol engine specification
+- [Caregiver Mobile App](../design/Caregiver%20Mobile%20App.md) — App design for Phase 3D
 - [Contributing](Contributing.md) — How to get involved

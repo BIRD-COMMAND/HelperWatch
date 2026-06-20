@@ -105,3 +105,4 @@ HelperWatch uses direct cloud addressing for all device communication, eliminati
 - [Caregiver Mobile App](Caregiver%20Mobile%20App.md) — Caregiver app details
 - [Indoor Positioning](Indoor%20Positioning.md) — ESP32 room scanner setup and positioning logic
 - [Privacy and Data Sovereignty](../ethics/Privacy%20and%20Data%20Sovereignty.md) — Data handling and cloud privacy pledge
+- [Behavioral Use Cases](Behavioral%20Use%20Cases.md) — Behavioral scenarios driving system feature requirements

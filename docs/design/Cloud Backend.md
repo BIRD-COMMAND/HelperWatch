@@ -176,3 +176,5 @@ Response (if update available):
 - [System Architecture](System%20Architecture.md) — How the cloud backend connects to other nodes
 - [Indoor Positioning](Indoor%20Positioning.md) — Room fingerprinting math and ESP32 scanner setup
 - [Privacy and Data Sovereignty](../ethics/Privacy%20and%20Data%20Sovereignty.md) — Cloud privacy pledge and data lifecycle
+- [Behavioral Use Cases](Behavioral%20Use%20Cases.md) — Behavioral scenarios informing AI orchestration and routine engine design
+- [Adaptive Response Architecture](Adaptive%20Response%20Architecture.md) — Child profiles, protocol engine, and context-aware decision logic
