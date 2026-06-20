@@ -4,6 +4,8 @@ HelperWatch is an open-source cognitive scaffolding initiative designed to empow
 
 By leveraging commodity smartwatches, simple wall-powered sensor nodes, and a secure Cloud Backend, HelperWatch serves as a **wearable cognitive prosthetic**—providing real-time, room-aware verbal cues, behavioral support, and safety alerts while maintaining a fierce commitment to data privacy.
 
+The products and solutions developed and provided by the open-source HelperWatch project are intended to be distributed at-cost and without profit to the community it serves. This is a non-profit, volunteer-driven effort.
+
 ---
 
 ## The Vision: Calm & Autonomous Care
