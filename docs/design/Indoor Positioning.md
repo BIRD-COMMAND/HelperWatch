@@ -90,7 +90,7 @@ A typical home requires **4–6 scanner nodes** for reliable coverage.
 
 - **Wall material matters.** Drywall is nearly transparent to BLE; concrete, brick, and metal significantly attenuate signals. Homes with heavy construction may require additional nodes or custom calibration.
 - **Wi-Fi Coverage.** Each ESP32 scanner node requires a stable connection to the home Wi-Fi to report RSSI values. Rooms with weak Wi-Fi signal might experience delayed or lost location reports.
-- **Latency.** Since the ESP32 scanner nodes are wall-powered, they scan continuously and report RSSI values multiple times per second. Room transitions are resolved on the Cloud Backend within **1–3 seconds**, a significant improvement over watch-scanning latency (which can be up to 50 seconds due to WearOS scan throttling).
+- **Latency.** Since the ESP32 scanner nodes are wall-powered, they scan continuously and report RSSI values multiple times per second. Room transitions are resolved on the Cloud Backend within **1–3 seconds**, providing a highly responsive system.
 - **Multi-floor homes.** BLE signals penetrate floors, which can cause ambiguity between rooms directly above/below each other. Multi-floor homes need nodes placed strategically to maximize distance between vertical lines and floor-specific calibration.
 
 ## References

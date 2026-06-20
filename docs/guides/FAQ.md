@@ -58,7 +58,7 @@ Not currently. HelperWatch targets Android/WearOS devices due to their openness 
 
 ### What are room scanner nodes?
 
-Small USB-powered ESP32 development boards placed in each room of the house. Unlike the original design where the watch scanned for passive beacons (which WearOS throttled), the ESP32 scanner nodes actively scan for the smartwatch's BLE broadcast, measure the signal strength, and send RSSI values to the Cloud Backend over Wi-Fi. This provides instant, battery-efficient room tracking.
+Small USB-powered ESP32 development boards placed in each room of the house. The ESP32 scanner nodes actively scan for the smartwatch's BLE broadcast, measure the signal strength, and send RSSI values to the Cloud Backend over Wi-Fi. This provides instant, battery-efficient room tracking without requiring the watch to run constant, battery-draining scanning services.
 
 See: [Indoor Positioning](../design/Indoor%20Positioning.md)
 

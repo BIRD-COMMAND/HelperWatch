@@ -18,7 +18,7 @@ This guide covers all hardware needed to deploy HelperWatch in a home, with reco
 
 The HelperWatch wearable app requires a budget Android or WearOS smartwatch with:
 
-> **Battery life expectation:** By replacing battery-heavy background BLE scanning with native, low-power BLE advertising, the watch's battery life is significantly extended. Under typical caregiving conditions, the watch can be expected to last **12–16+ hours**, making it suitable for a full day of use without requiring a mid-day charge.
+> **Battery life expectation:** By using native, low-power BLE advertising, we make optimal use of the watch's design and battery capacity. Under typical caregiving conditions, the watch can be expected to last **12–16+ hours**, making it suitable for a full day of use without requiring a mid-day charge.
 
 | Feature | Required | Notes |
 |---------|----------|-------|
@@ -113,6 +113,6 @@ A monthly subscription or token usage fee (typically **$5–15/month**) covers c
 ## Related Documents
 
 - [Getting Started](Getting%20Started.md) — Setup walkthrough
-- [Indoor Positioning](../design/Indoor%20Positioning.md) — Flipped BLE scanning details
+- [Indoor Positioning](../design/Indoor%20Positioning.md) — Indoor positioning logic and setup
 - [Cloud Backend](../design/Cloud%20Backend.md) — Cloud services details
 - [System Architecture](../design/System%20Architecture.md) — Technical component overview

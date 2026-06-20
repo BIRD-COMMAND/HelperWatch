@@ -25,7 +25,7 @@ See: [Hardware Guide](../guides/Hardware%20Guide.md) for specific device recomme
 
 ### BLE Advertising
 
-Instead of scanning for room beacons (which WearOS aggressively throttles), the watch operates in **BLE advertising mode**.
+To avoid background scanning limitations and aggressive operating system throttling, the watch operates in **BLE advertising mode**.
 
 - The watch background service continuously advertises a unique, secure Bluetooth Low Energy identifier.
 - WearOS natively supports persistent BLE advertising with minimal power consumption, and the operating system does not throttle advertising in the background like it does scanning.
@@ -76,7 +76,7 @@ The watch communicates directly with the Cloud Backend over Wi-Fi using a secure
 
 ## Battery and Power Considerations
 
-By flipping the positioning model from active scanning to passive BLE advertising, the wearable's battery life is significantly improved. Smartwatches with 300–400mAh batteries can expect a **12–16+ hour battery life** under normal caregiving conditions—eliminating the strict requirement for mid-day charging.
+In line with the design philosophy of these types of wearables, we utilize low-power BLE advertising rather than active background scanning. As a result, we can expect a **12–16+ hour battery life** under normal caregiving conditions.
 
 **Key optimizations:**
 - **BLE Advertising:** BLE advertising has a negligible power footprint compared to continuous or intermittent BLE scanning.

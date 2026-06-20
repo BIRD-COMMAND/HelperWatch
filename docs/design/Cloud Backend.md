@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Cloud Backend is the central coordination engine of the HelperWatch system, deployed in a secure cloud environment. It replaces the local desktop server, eliminating local hardware dependency, installation complexity, and local network configuration issues (like mDNS and Tailscale). 
+The Cloud Backend is the central coordination engine of the HelperWatch system, deployed in a secure cloud environment. By running in the cloud, the system avoids local hardware dependencies, installation complexity, and local network configuration challenges. 
 
 The backend receives location reports from ESP32 room scanner nodes, processes biometric and transcribed text data from the smartwatch, coordinates routine transitions, runs the AI classifier/router, and provides real-time state synchronization to the caregiver mobile app.
 
