@@ -44,6 +44,8 @@ HelperWatch is currently in **Phase 0 (Foundation & Documentation)** of developm
 
 Explore the HelperWatch wiki directory to learn more:
 
+[Behavioral Use Cases](docs/design/Behavioral%20Use%20Cases.md) — Real-world behavioral scenarios, user stories, and feature requirements. This is recommended first reading to get a sense of the what, why, and how of the project.
+
 ### 1. Project Overview
 - [Mission and Values](docs/project/Mission%20and%20Values.md) — The core values driving HelperWatch.
 - [Project Roadmap](docs/project/Project%20Roadmap.md) — Development timeline and current phase.
