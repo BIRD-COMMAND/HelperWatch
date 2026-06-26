@@ -162,6 +162,14 @@ A routine is an ordered list of steps with configurable parameters:
 **Routine-level settings:**
 - Schedule (recurring times, or manual trigger only)
 - Dynamic fading (on/off, aggressiveness)
+- Prompt hierarchy direction — presented as "How should the system prompt [Child] for this routine?" with two options:
+  - *"Start gentle, get more specific if needed"* (Least-to-Most — best for established routines)
+  - *"Start with full instructions, fade over time"* (Most-to-Least — best for new routines)
+- Reinforcement schedule — presented as "How often should the system encourage [Child] during this routine?" with options:
+  - *"After every step"* (Continuous — default for new routines)
+  - *"After some steps, varied"* (Variable Ratio — best for established routines)
+  - *"Only at the end"* (Chain-End — for children who find per-step praise disruptive)
+  - *"No verbal encouragement"* (Minimal — for children uncomfortable with praise)
 - Associated macro trigger (link to a one-tap card)
 
 **Template routines:**
@@ -201,6 +209,12 @@ Most caregivers should never need to interact with protocol internals. The templ
 - Graduated firmness rate
 - Request allowance rules (water: once, bathroom: always, questions: defer)
 - Companion mode (on/off, ambient sound selection)
+
+**Prompting and reinforcement settings:**
+- Default prompt hierarchy direction for new routines — "When [Child] starts a brand-new routine, should the system start with full instructions or start gentle?"
+- Prompt dependency detection — on/off. When on, the system alerts the caregiver if [Child] consistently waits for the most detailed prompt before acting.
+- Reinforcement variety — "Should the system vary its encouragement phrases?" (Recommended: on. Prevents "Good job!" fatigue.)
+- Reinforcement fading suggestions — on/off. When on, the system suggests reducing encouragement frequency as [Child] masters a routine.
 
 Each setting is presented in plain language with the current value and a brief explanation of what changing it does. Advanced settings are hidden behind an "Advanced" toggle — available but not visible by default.
 

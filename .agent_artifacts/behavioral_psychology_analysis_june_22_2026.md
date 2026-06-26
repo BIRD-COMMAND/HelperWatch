@@ -21,7 +21,7 @@ However, because the architecture is built on intuitive field observations, it o
 The system design aligns closely with several core clinical practices, demonstrating that the underlying behavioral intuition is highly sound:
 
 *   **Antecedent Control (Room-Aware Scaffolding):** In Applied Behavior Analysis (ABA), managing the environment to make target behaviors more likely is called antecedent control. By using ESP32 room scanners to deliver context-appropriate cues, HelperWatch automatically aligns prompt delivery with environmental antecedents.
-*   **Behavioral Intercept (Meltdown Arc):** Mapping the meltdown as a physiological arc (Build-up $\rightarrow$ Peak $\rightarrow$ Recovery) rather than a binary state is clinically accurate. The decision to **suppress verbal cues during the peak** is a crucial safety feature that prevents sensory overload from escalating neurological distress.
+*   **Behavioral Intercept (Meltdown Arc):** Mapping the meltdown as a physiological arc (Build-up → Peak → Recovery) rather than a binary state is clinically accurate. The decision to **suppress verbal cues during the peak** is a crucial safety feature that prevents sensory overload from escalating neurological distress.
 *   **Functional Interpretation of Echolalia:** Treating immediate and delayed echolalia/scripting as communicative, processing, or self-regulatory tools—rather than non-compliant behavior—aligns with modern speech-language pathology and neurodiversity-affirming practices.
 *   **Dynamic Fading:** The core concept of reducing prompts as the child demonstrates mastery matches the clinical goal of prompt fading, which prevents prompt dependency.
 
@@ -47,7 +47,7 @@ The documents discuss "executive dysfunction" as a single variable that causes t
 ### C. The Simplification of Reinforcement and Prompting
 The prompting and reinforcement (micro-affirmations) models in the documents are highly linear and continuous.
 *   **The Clinical Reality:** 
-    *   **Prompt Hierarchies:** Prompts are categorized from least-to-most intrusive (visual $\rightarrow$ verbal $\rightarrow$ gestural $\rightarrow$ modeling $\rightarrow$ physical) or vice versa. The system should define which direction it is fading.
+    *   **Prompt Hierarchies:** Prompts are categorized from least-to-most intrusive (visual → verbal → gestural → modeling → physical) or vice versa. The system should define which direction it is fading.
     *   **Reinforcement Schedules:** Constant positive reinforcement ("Good job!" after every single step) quickly leads to **satiation** (the reward loses value) or **reinforcer fatigue**. It can also disrupt the flow of a routine by introducing unnecessary verbal noise.
 *   **The System Risk:** Without a structured prompting hierarchy, the AI may jump randomly between levels of prompts (e.g., moving from a verbal hint to a direct command too quickly), causing frustration. Constant micro-affirmations might also desensitize the child to validation, rendering the reinforcement ineffective over time.
 
@@ -140,7 +140,7 @@ To translate these concepts into system design:
 1.  **Refine the Vocabulary:** Change documentation references to "co-regulation via intercom" to **"Remote Caregiver Presence"** or **"Intercom Co-Regulation Tool"**. Clearly state in the ethics guide that the device is a scaffold for task execution, not a replacement for somatic, face-to-face emotional co-regulation.
 2.  **Structure the Sensory Modulation Profile:** Instead of listing sensory inputs ad-hoc, categorize the child’s sensory profile into *Sensory Avoiding* (demands silence/haptics, low-volume) and *Sensory Seeking* (demands rhythmic audio, tactile feedback).
 3.  **Incorporate Prompt Hierarchies in the Routine Engine:** Allow caregivers to choose a prompting strategy:
-    *   *Least-to-Most (LTM):* Visual $\rightarrow$ Verbal Hint $\rightarrow$ Direct Verbal Command (best for maintaining independence).
-    *   *Most-to-Least (MTL):* Direct Command $\rightarrow$ Verbal Hint (best for learning brand-new routines).
+    *   *Least-to-Most (LTM):* Visual → Verbal Hint → Direct Verbal Command (best for maintaining independence).
+    *   *Most-to-Least (MTL):* Direct Command → Verbal Hint (best for learning brand-new routines).
 4.  **Variable Reinforcement for Micro-Affirmations:** Instead of the system delivering a micro-affirmation after every single step, implement an option for **Variable Ratio Reinforcement** (e.g., affirming randomly after 30-50% of completed steps, or only at the end of a chain of steps) to prevent satiation and maintain momentum.
 5.  **Address Parasocial Attachment in the Ethics Guardrails:** Add a specific section to [Safety and Ethics Overview](file:///c:/dev/HelperWatch/docs/ethics/Safety%20and%20Ethics%20Overview.md) regarding the watch voice's social footprint. Instruct caregivers to avoid framing the watch as a "friend" or "person," and recommend that the voice style remain friendly but distinctly machine-like to prevent parasocial confusion.

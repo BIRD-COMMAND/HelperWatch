@@ -50,16 +50,47 @@ How the child experiences sensory input. Directly drives decisions about cue mod
 
 ### Executive Function Profile
 
-The child's capacity for planning, sequencing, initiating, and sustaining tasks. This determines how many steps the system delivers at once, how aggressively it re-prompts, and how it handles transitions.
+Executive function is not a single capacity — it is a suite of distinct cognitive processes. A child can have strong working memory but severe difficulty shifting between tasks, or adequate flexibility but poor impulse control. Treating executive dysfunction as a monolith produces generic scaffolding; decomposing it into sub-domains produces scaffolding that addresses the *specific* cognitive bottleneck the child is experiencing in a given moment.
+
+The profile organizes executive function into three sub-domains, each driving distinct protocol behavior:
+
+#### Working Memory
+
+The ability to hold and manipulate information over short intervals. Working memory determines how many sequential instructions the child can retain and act on before the information decays.
 
 | Field | Purpose | Example Values |
 |-------|---------|---------------|
-| **Working memory capacity** | How many sequential steps the child can hold | 1 step at a time, 2 steps, 3+ steps |
-| **Task initiation difficulty** | How much prompting the child needs to start a task they know how to do | Minimal (single cue sufficient), Moderate (needs 2–3 cues), High (needs step-by-step from zero) |
-| **Transition tolerance** | How well the child handles shifting from one activity to another | Easy (brief warning sufficient), Moderate (needs countdown + bridging), Difficult (extended warning + first-step anchoring + possible resistance), Highly difficult (transitions regularly trigger meltdowns) |
-| **Time awareness** | Whether the child has any functional sense of time passing | Functional (understands "5 minutes"), Limited (understands "soon" vs. "later"), None (time references are meaningless) |
-| **Sustained attention capacity** | How long the child can stay on a non-preferred task before attention decays | Brief (1–3 min), Short (3–10 min), Moderate (10–20 min), Extended (20+ min) |
-| **Routine dependence** | How much the child relies on predictability and sameness | Flexible, Moderate (prefers routine, tolerates variation), Rigid (deviation causes distress) |
+| **Step capacity** | How many sequential steps the child can hold at once before the earliest ones decay | 1 step at a time, 2 steps, 3+ steps |
+| **Decay rate** | How quickly held instructions fade without reinforcement — determines re-prompting urgency | Slow (retains for 30s+), Moderate (retains for 10–30s), Fast (retains for <10s) |
+| **Spatial anchoring effectiveness** | Whether pointing the child back to a physical object ("your toothbrush is right there") recovers a lost instruction | Effective (spatial cues restore the instruction), Partially effective, Ineffective (needs full re-delivery) |
+
+**Protocol implications:** Working memory failures look like the child "forgetting" what they were asked to do. The system responds with **re-delivery and spatial re-anchoring** — re-stating the instruction, pointing to the physical object or location, and keeping step count within the child's capacity. This is fundamentally different from how the system handles set-shifting or inhibitory control failures.
+
+#### Cognitive Flexibility (Set-Shifting)
+
+The ability to shift attention, mental set, or behavioral approach between different tasks, rules, or contexts. This is the sub-domain that makes transitions painful — the child's cognition is "locked" on the current activity and cannot smoothly release it.
+
+| Field | Purpose | Example Values |
+|-------|---------|---------------|
+| **Transition tolerance** | How well the child handles shifting from one activity to another | Easy (brief warning sufficient), Moderate (needs countdown + bridging), Difficult (extended warning + first-step anchoring + resistance likely), Highly difficult (transitions regularly trigger meltdowns) |
+| **Task-switching cost** | How much cognitive effort a shift requires — even between steps within a routine | Low (shifts fluidly), Moderate (brief reorientation needed), High (each shift is a mini-transition) |
+| **Routine dependence** | How much the child relies on predictability and sameness — a proxy for flexibility tolerance | Flexible, Moderate (prefers routine, tolerates variation), Rigid (deviation causes distress) |
+| **Time awareness** | Whether the child has any functional sense of time passing — affects whether countdown-based transition warnings are meaningful | Functional (understands "5 minutes"), Limited (understands "soon" vs. "later"), None (time references are meaningless) |
+
+**Protocol implications:** Set-shifting failures look like the child "refusing" to transition or getting stuck on one step of a routine. The system responds with **antecedent warnings, cognitive bridges, and first-step anchoring** — connecting the current activity to the next one, providing extended countdowns, and delivering only the first physical action to lower the switching cost. A child with high set-shifting cost also needs *within-routine* bridging: "Great, toothbrush is done. Now we're switching to getting dressed."
+
+#### Inhibitory Control
+
+The ability to resist impulses, suppress prepotent responses, and sustain goal-directed behavior in the face of distractions. This is the sub-domain that drives blurting, impulsive task abandonment, and difficulty waiting.
+
+| Field | Purpose | Example Values |
+|-------|---------|---------------|
+| **Impulse regulation** | How well the child can suppress immediate urges in favor of task goals | Strong (can wait when asked), Moderate (can wait briefly with support), Weak (acts on impulse, cannot reliably wait) |
+| **Sustained attention capacity** | How long the child can stay on a non-preferred task before attention decays to distractors | Brief (1–3 min), Short (3–10 min), Moderate (10–20 min), Extended (20+ min) |
+| **Delay tolerance** | Whether the child can wait for a deferred reward or outcome | Can wait with countdown, Can wait briefly without countdown, Cannot tolerate delay (immediate escalation) |
+| **Task initiation difficulty** | How much prompting the child needs to start a task they know how to do — partially an inhibition issue (inhibiting the current activity to begin the new one) | Minimal (single cue sufficient), Moderate (needs 2–3 cues), High (needs step-by-step from zero) |
+
+**Protocol implications:** Inhibitory control failures look like the child "not listening" or "being defiant" — but the child may genuinely be unable to suppress the current impulse. The system responds with **impulse anchoring and distractor management** — brief, concrete cues that interrupt the impulse ("Let's pause"), redirection away from the competing stimulus, and shorter task segments that stay within the child's sustained attention window. For blurted questions during transitions, the system can distinguish between impulsive blurting (inhibitory control) and avoidance bidding (behavioral profile) using the profile flags.
 
 ### Emotional Regulation Profile
 
@@ -161,6 +192,82 @@ When the protocol deactivates and normal operation resumes:
 - **Timeout** — A maximum protocol duration has elapsed
 - **Caregiver override** — The caregiver manually dismisses the protocol from the app
 - **Preemption** — A higher-priority protocol activates and takes over
+
+### Prompt Hierarchy Model
+
+Prompts are not all equivalent. A verbal hint ("What's next?") places a fundamentally different cognitive demand on the child than a full directive ("Pick up the blue toothbrush"). The system must move through prompts in a structured direction — not jump randomly between levels, which causes confusion and frustration.
+
+The system supports two prompt hierarchy directions, configured **per-routine**:
+
+#### Least-to-Most (LTM)
+
+Start with the minimal prompt and increase intrusiveness only if the child does not respond within their auditory processing latency window.
+
+**Prompt sequence:**
+1. **Environmental cue** — Room-aware context only (the child is in the right room, the routine is active, no verbal prompt yet)
+2. **Indirect verbal hint** — "What's next?" / "Do you remember the next step?"
+3. **Direct verbal instruction** — "Your next step is to pick up your toothbrush."
+4. **Simplified directive** — "Pick up the toothbrush. The blue one."
+5. **Caregiver alert** — Automated prompting exhausted; hand off.
+
+**Best for:** Established routines the child has done before. Children who can self-initiate with a nudge. The goal is to find the *minimum effective prompt* and stay there — building independence.
+
+#### Most-to-Least (MTL)
+
+Start with the most supportive prompt and fade as the child demonstrates mastery over time (across days/weeks, not within a single routine instance).
+
+**Prompt sequence:**
+1. **Full step-by-step instruction** — "Okay, next step: pick up the blue toothbrush from the holder."
+2. **Direct verbal instruction** — "Pick up your toothbrush."
+3. **Indirect verbal hint** — "What's next?"
+4. **Environmental cue only** — No verbal prompt; system monitors for completion.
+5. **No prompt** — Step is fully mastered; system does not intervene.
+
+**Best for:** Brand-new routines the child is learning for the first time. Children with severe task initiation difficulty (inhibitory control sub-domain). The goal is to guarantee early success and build confidence, then systematically withdraw support.
+
+**Fading integration:** The prompt hierarchy direction interacts with the existing dynamic fading system. For LTM routines, fading means the child needs fewer escalation steps over time (they respond to level 1 or 2 consistently). For MTL routines, fading means the *starting level* drops over time (from level 1 toward level 4 or 5).
+
+**Preventing prompt dependency:** The system tracks whether a child consistently waits for the most intrusive prompt before acting — a sign of prompt dependency. If detected, it surfaces a suggestion to the caregiver: *"[Child] appears to be waiting for the full instruction before starting. Consider switching this routine to Least-to-Most prompting to encourage self-initiation."*
+
+### Reinforcement Schedule Model
+
+Constant positive reinforcement after every step ("Great job!" × 8 steps × 3 routines per day) quickly leads to **reinforcer satiation** — the validation loses its value, becomes background noise, and may even disrupt the flow of a routine by introducing unnecessary verbal interruptions. The system must deliver reinforcement strategically, not reflexively.
+
+The system supports four reinforcement schedules, configured **per-routine** and influenced by the child's **response to direct praise** profile field:
+
+#### Continuous Reinforcement (CRF)
+
+Deliver a micro-affirmation after every completed step.
+
+**Best for:** Brand-new routines, routines the child dislikes, days with low quality scores, children who need high encouragement to stay engaged. This is the default for new routines and MTL prompt hierarchies.
+
+**Satiation risk:** High. The system should automatically suggest transitioning to a less dense schedule once the child completes the routine consistently for N days.
+
+#### Variable Ratio Reinforcement (VR)
+
+Deliver micro-affirmations after a random subset of steps — approximately 30–50% of completions, varied unpredictably.
+
+**Best for:** Established routines, children who are comfortable with the routine, maintaining long-term engagement without satiation. Variable ratio is the most effective schedule for sustaining behavior over time — the unpredictability keeps the reinforcement novel.
+
+**Satiation risk:** Low. This is the target schedule for most routines after the initial learning phase.
+
+#### Chain-End Reinforcement
+
+Deliver reinforcement only at the end of a sequence of steps (e.g., after every 3 steps, or only at routine completion), not after individual steps.
+
+**Best for:** Children who find step-by-step affirmation disruptive to their flow. Children with high routine competence who are disrupted by verbal interruptions mid-task. Routines where momentum matters more than individual step encouragement.
+
+**Satiation risk:** Very low. But insufficient for children who need per-step support.
+
+#### Minimal / Non-Verbal Reinforcement
+
+No verbal micro-affirmation. Replace with a brief haptic pulse, a soft tone, or nothing — silent progress tracking visible only in the caregiver app.
+
+**Best for:** Children whose profile indicates discomfort with direct praise. Children who are distracted or agitated by verbal interruptions. Advanced fading where the child has fully mastered the routine.
+
+**Reinforcement variety:** Regardless of schedule, the system should vary the specific affirmation language to prevent habituation. A library of affirmation variants — not a single repeated phrase — prevents the "Good job!" problem. Variants should match the child's interaction preferences (tone, humor tolerance, directness).
+
+**Fading reinforcement density:** Just as prompts fade over time, reinforcement density should fade as the child demonstrates mastery. The typical progression is: CRF (learning phase) → VR (competence phase) → Chain-End or Minimal (mastery phase). The system can suggest these transitions based on completion rate data.
 
 ### Context Evaluation Model
 
@@ -281,13 +388,26 @@ The following categories map directly to the user stories in [Behavioral Use Cas
 
 #### Routine Scaffolding Protocols (US-6)
 
+The scaffolding response depends on *why* the child is stuck. The same observable failure — child not progressing on a step — requires different intervention depending on which executive function sub-domain is the bottleneck:
+
+| Failure Signal | Working Memory Strategy | Set-Shifting Strategy | Inhibitory Control Strategy |
+|---|---|---|---|
+| Child not starting step | Re-deliver the instruction — they forgot | Acknowledge the shift: "We're done with [previous]. Now: [step]" | Impulse anchor: "Let's pause [distractor]. Now: [step]" |
+| Child abandons mid-step | Spatial re-anchor: "Your toothbrush is right there" | Check for cognitive lock on prior activity; bridge explicitly | Redirect away from competing distractor |
+| Child stuck, no movement | Simplify to single physical action within WM capacity | Reduce the step to its first sub-action (lower switching cost) | Shorten the expected segment; break step into micro-steps within attention window |
+| Step completed | Advance to next step; deliver per reinforcement schedule | Bridge to next step: "Toothbrush done. Now we switch to clothes" | Advance; consider whether to acknowledge impulse control effort |
+
+The system selects the strategy column based on the child's profile. A child with low working memory but adequate flexibility gets the WM column. A child with adequate memory but poor set-shifting gets the flexibility column. A child with deficits in multiple sub-domains gets a blended approach — the system leads with whichever sub-domain is most impaired (per profile) and layers secondary strategies as needed.
+
+**General scaffolding protocols (apply regardless of sub-domain):**
+
 | Context | Protocol |
 |---------|----------|
-| Routine step active, child in correct room, no speech/movement for N seconds | Re-prompt: "Next step is [X]. Can you do that?" |
-| Routine step completed (time/verbal/transition confirmation) | Micro-affirmation + advance: "Nice! Now let's [next step]." |
-| Step completed independently (before system prompted) | Fading note: reduce prompting for this step next time |
-| Step duration exceeds expected time | Stuck detection: "Need help? Your next step is [X]." |
-| All steps completed | Routine completion celebration: "You did it! [Routine] is done." |
+| Routine step active, child in correct room, no progress for N seconds | Re-prompt using the prompt hierarchy direction configured for this routine (see Prompt Hierarchy Model) |
+| Routine step completed | Deliver reinforcement per the routine's reinforcement schedule (see Reinforcement Schedule Model) + advance to next step |
+| Step completed independently (before system prompted) | Fading note: reduce prompting intensity for this step next time |
+| Step duration exceeds expected time | Stuck detection: apply sub-domain-appropriate strategy from the table above |
+| All steps completed | Routine completion reinforcement (always delivered regardless of reinforcement schedule) |
 
 #### Meltdown Arc Protocols (US-7)
 
@@ -403,14 +523,14 @@ The caregiver adds:
 
 Pre-built profile templates provide reasonable starting points for common presentations. Templates are not diagnoses — they are starting configurations that match commonly observed behavioral patterns.
 
-| Template | Description | Key Defaults |
-|----------|-------------|-------------|
-| **Non-verbal, severe executive dysfunction** | Child does not use spoken language, needs 1-step concrete prompts, high task initiation difficulty, rigid routine dependence | Haptic-first cues, extended response latency, maximum scaffolding, conservative fading |
-| **Verbal, impulsive, attention-seeking** | Child speaks fluently but blurts, interrupts, escalates for engagement, moderate executive dysfunction | Proactive engagement at short intervals, brief acknowledgment of bids, redirect-heavy protocols, firm + warm boundaries |
-| **Verbal, anxious, perseverative** | Child speaks but fixates on topics/questions, high anxiety, moderate executive dysfunction | Extended answer phase for perseveration, gentle tone, slow transitions, calming protocols prioritized |
-| **Limited verbal, sensory-sensitive** | Child uses some words/phrases, strong sensory sensitivities, moderate-to-severe executive dysfunction | Low-volume audio or haptic-only cues, extended processing time, sensory overload protocols on sensitive thresholds |
+| Template | Description | EF Sub-Domain Defaults | Key Defaults |
+|----------|-------------|----------------------|-------------|
+| **Non-verbal, severe executive dysfunction** | Child does not use spoken language, needs 1-step concrete prompts, high task initiation difficulty, rigid routine dependence | WM: 1-step, fast decay. Flexibility: rigid, high switching cost. Inhibitory: variable. | Haptic-first cues, extended response latency, maximum scaffolding, MTL prompt hierarchy, continuous reinforcement, conservative fading |
+| **Verbal, impulsive, attention-seeking** | Child speaks fluently but blurts, interrupts, escalates for engagement | WM: adequate (2–3 steps). Flexibility: moderate. Inhibitory: weak impulse regulation, brief sustained attention. | Proactive engagement at short intervals, redirect-heavy protocols, firm + warm boundaries, LTM prompt hierarchy, variable ratio reinforcement |
+| **Verbal, anxious, perseverative** | Child speaks but fixates on topics/questions, high anxiety | WM: adequate. Flexibility: moderate-to-low (perseveration is a flexibility deficit). Inhibitory: moderate. | Extended answer phase for perseveration, gentle tone, slow transitions, calming protocols prioritized, LTM prompt hierarchy, chain-end reinforcement |
+| **Limited verbal, sensory-sensitive** | Child uses some words/phrases, strong sensory sensitivities | WM: 1–2 steps, moderate decay. Flexibility: moderate-to-rigid. Inhibitory: variable. | Low-volume audio or haptic-only cues, extended processing time, sensory overload protocols on sensitive thresholds, MTL prompt hierarchy, continuous reinforcement |
 
-Templates populate all profile fields with defaults. The caregiver can then override any field. The template is a starting point, not a prescription.
+Templates populate all profile fields — including executive function sub-domain fields — with defaults. The caregiver can then override any field. The template is a starting point, not a prescription.
 
 ### Protocol Templates
 
@@ -433,7 +553,8 @@ The caregiver's primary configuration task is replacing the generic response scr
 
 **Child profile (relevant fields):**
 - Verbal expression: Full sentences
-- Time awareness: None
+- Cognitive flexibility: Moderate-to-low (perseveration is a flexibility deficit)
+- Time awareness: None (set-shifting sub-domain)
 - Perseveration tendency: Severe
 - Known perseverative topics: Dinner, tomorrow's schedule
 - Day quality score: +8 (good morning, two routines completed successfully)
@@ -453,8 +574,9 @@ The caregiver's primary configuration task is replacing the generic response scr
 
 **Child profile (relevant fields):**
 - Verbal expression: Full sentences
-- Task initiation difficulty: High
-- Transition tolerance: Difficult
+- Task initiation difficulty: High (inhibitory control sub-domain)
+- Transition tolerance: Difficult (set-shifting sub-domain)
+- Impulse regulation: Weak (inhibitory control sub-domain)
 - Auditory processing latency: Moderate (5–10s)
 - Attention-seeking pattern: Seeks any attention
 - Avoidance behaviors: Asks unrelated questions
@@ -464,12 +586,13 @@ The caregiver's primary configuration task is replacing the generic response scr
 **Protocol trace:**
 1. **Trigger:** Transcript received: "Can I have ice cream tomorrow?"
 2. **Context qualifier:** A transition countdown is active (recent event buffer: transition warning 30 seconds ago). The child's profile flags "asks unrelated questions" as an avoidance behavior. The question is not a known perseverative topic — it is a novel bid.
-3. **Protocol selection:** The transition protocol is active at priority 5. The question matches the avoidance behavior pattern. The system classifies this as a **transition-avoidance bid**, not a genuine question requiring a full answer.
-4. **Response:** Brief acknowledgment without engaging the topic: *"Maybe! We can talk about that after dinner. Right now, one more minute of play time."* The transition countdown is **not reset** by the question. The system maintains the countdown cadence.
-5. **Escalation rule:** If the child asks another avoidance question, the system acknowledges even more briefly: *"Let's talk after dinner."* and continues the countdown.
-6. **Exit condition:** The transition protocol remains active until the child moves to the kitchen or the caregiver overrides.
+3. **Sub-domain differentiation:** The child's profile shows weak impulse regulation. The system must decide: is this an impulsive blurt (inhibitory control failure — the child couldn't suppress the thought) or a deliberate avoidance bid (behavioral pattern — the child is trying to derail the transition)? The avoidance behavior flag and the active transition countdown together classify this as avoidance. If the profile did *not* flag question-asking as avoidance, the system would classify this as an impulse and treat it with more patience.
+4. **Protocol selection:** The transition protocol is active at priority 5. The question matches the avoidance behavior pattern. The system classifies this as a **transition-avoidance bid**, not a genuine question requiring a full answer.
+5. **Response:** Brief acknowledgment without engaging the topic: *"Maybe! We can talk about that after dinner. Right now, one more minute of play time."* The transition countdown is **not reset** by the question. The system maintains the countdown cadence.
+6. **Escalation rule:** If the child asks another avoidance question, the system acknowledges even more briefly: *"Let's talk after dinner."* and continues the countdown.
+7. **Exit condition:** The transition protocol remains active until the child moves to the kitchen or the caregiver overrides.
 
-**Why the profile matters:** A different child — one whose profile does not flag question-asking as avoidance behavior and whose perseveration tendency is high — would receive a full, patient answer to the ice cream question, because for that child, an unanswered question can become a perseverative loop that makes the transition harder, not easier.
+**Why the profile matters:** A different child — one whose profile does not flag question-asking as avoidance behavior and whose perseveration tendency is high — would receive a full, patient answer to the ice cream question, because for that child, an unanswered question can become a perseverative loop that makes the transition harder, not easier. And a third child — one with weak impulse regulation but no avoidance flag — would receive a brief, warm acknowledgment ("Good question! After dinner.") and a gentle redirect, treating the blurt as an impulse rather than a strategy.
 
 ### Example 3: Sibling Conflict Followed by Post-Conflict Meltdown
 

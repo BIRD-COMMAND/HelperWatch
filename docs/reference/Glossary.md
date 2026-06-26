@@ -31,6 +31,9 @@ The conceptual framing of HelperWatch: a system that acts as an external extensi
 **Cognitive Scaffolding**
 Providing structured, step-by-step support to help a person complete tasks they cannot yet manage independently. HelperWatch provides scaffolding through real-time verbal cues, location-aware prompting, and micro-affirmations.
 
+**Cognitive Flexibility (Set-Shifting)**
+One of the three executive function sub-domains. The ability to shift attention, mental set, or behavioral approach between different tasks, rules, or contexts. Deficits in cognitive flexibility are the primary driver of transition resistance — the child's cognition is "locked" on the current activity and cannot smoothly release it. Addressed with antecedent warnings, cognitive bridges, and first-step anchoring. See: [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md).
+
 **Companion Mode**
 A low-level ambient presence mode used primarily during bedtime. The system provides periodic soft check-ins, ambient sounds, or a breathing guide to give the child a sense of presence without requiring the caregiver to physically remain in the room. See: [Behavioral Use Cases — US-10](../design/Behavioral%20Use%20Cases.md).
 
@@ -70,6 +73,9 @@ When a language model generates plausible-sounding but factually incorrect, illo
 **Intercom Mode (Push-to-Talk)**
 A caregiver mobile app feature that allows the parent to speak a command that the Cloud Backend integrates into the next verbal cue to the child, maintaining the familiar AI voice rather than jarring the child with a direct walkie-talkie transmission.
 
+**Inhibitory Control**
+One of the three executive function sub-domains. The ability to resist impulses, suppress prepotent responses, and sustain goal-directed behavior in the face of distractions. Drives blurting, impulsive task abandonment, and difficulty waiting. Addressed with impulse anchoring, distractor management, and shorter task segments. See: [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md).
+
 **Macro Routine Trigger**
 A one-tap card in the caregiver mobile app that switches the AI's entire behavior profile — adjusting prompt frequency, biometric thresholds, and active scripts — to match a specific scenario (bedtime, leaving the house, cool-down).
 
@@ -77,7 +83,7 @@ A one-tap card in the caregiver mobile app that switches the AI's entire behavio
 The system's ability to detect early warning signs of emotional dysregulation (biometric spikes, pacing, motion patterns) and intervene with calming cues before a full meltdown manifests. The full meltdown arc includes build-up detection, peak protocol (prompt suppression), and recovery re-engagement. See: [Behavioral Use Cases — US-7](../design/Behavioral%20Use%20Cases.md).
 
 **Micro-Affirmation**
-Brief, immediate positive reinforcement delivered by the AI after the child completes a small step. Designed to shift the background noise of the child's day from constant correction to consistent encouragement.
+Brief, immediate positive reinforcement delivered by the AI after the child completes a step. The frequency and style of micro-affirmations are governed by the routine's reinforcement schedule (continuous, variable ratio, chain-end, or minimal) to prevent reinforcer satiation. Affirmation language should be varied from a library of alternatives rather than repeating a single phrase. See: [Adaptive Response Architecture — Reinforcement Schedule Model](../design/Adaptive%20Response%20Architecture.md).
 
 **Perseveration**
 The persistent repetition of a behavior, question, or topic beyond what is contextually appropriate. In the HelperWatch context, perseverative questioning (asking the same question repeatedly) is a common behavioral pattern addressed with a graduated response strategy. See: [Behavioral Use Cases — US-2](../design/Behavioral%20Use%20Cases.md).
@@ -91,8 +97,17 @@ System-initiated interaction designed to fill attention gaps before the child es
 **Protocol Priority**
 A fixed hierarchy (9 levels) that determines which response protocol takes precedence when multiple protocols trigger simultaneously. Safety and meltdown peak are highest priority; companion/ambient mode is lowest. Lower-priority protocols are suspended, not cancelled, and resume when the higher-priority protocol exits. See: [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md).
 
+**Prompt Hierarchy**
+A structured sequence of prompts ordered by intrusiveness. The system supports two directions: **Least-to-Most (LTM)** starts with the minimal prompt and escalates (environmental cue → indirect hint → direct instruction → simplified directive → caregiver alert), best for established routines. **Most-to-Least (MTL)** starts with full support and fades over time, best for new routines. Configured per-routine. Prevents prompt dependency by ensuring the system moves through prompts in a consistent direction rather than jumping randomly between levels. See: [Adaptive Response Architecture — Prompt Hierarchy Model](../design/Adaptive%20Response%20Architecture.md).
+
 **Recent Event Buffer**
 A short-term memory maintained by the response protocol engine, tracking significant events (meltdowns, conflicts, successful routines, caregiver interjections) with time decay. Events in the buffer influence protocol selection within their decay window — e.g., a meltdown 20 minutes ago causes the system to reduce prompt intensity even if current biometrics are stable. See: [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md).
+
+**Reinforcement Schedule**
+The pattern governing how frequently the system delivers micro-affirmations. Four schedules are supported: **Continuous (CRF)** — every step (learning phase), **Variable Ratio (VR)** — random ~30–50% of steps (competence phase), **Chain-End** — only after step sequences or routine completion (mastery phase), **Minimal** — no verbal reinforcement (for children uncomfortable with praise). Configured per-routine; the system suggests fading density over time. See: [Adaptive Response Architecture — Reinforcement Schedule Model](../design/Adaptive%20Response%20Architecture.md).
+
+**Reinforcer Satiation**
+The phenomenon where constant positive reinforcement ("Good job!" after every step) causes the reward to lose its motivational value, becoming background noise. Addressed by using variable ratio or chain-end reinforcement schedules and varying affirmation language.
 
 **Response Protocol**
 A structured decision unit in the response protocol engine. Every protocol has five parts: trigger conditions (what activates it), context qualifiers (what narrows the response), response actions (what the system does), escalation rules (what happens if it doesn't work), and exit conditions (when it deactivates). See: [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md).
@@ -117,6 +132,9 @@ The event or signal that activates a response protocol. Triggers can be transcri
 
 **WebSocket**
 A communication protocol that provides persistent, bidirectional communication between two endpoints over a single connection. Used for real-time data exchange (WSS) between the smartwatch, mobile app, and Cloud Backend.
+
+**Working Memory**
+One of the three executive function sub-domains. The ability to hold and manipulate information over short intervals. Determines how many sequential instructions the child can retain and act on before the information decays. Addressed with re-delivery, spatial re-anchoring ("your toothbrush is right there"), and keeping step counts within the child's capacity. See: [Adaptive Response Architecture](../design/Adaptive%20Response%20Architecture.md).
 
 ---
 
