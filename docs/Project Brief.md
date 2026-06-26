@@ -17,10 +17,11 @@ There is a real and meaningful opportunity to transform and improve the daily li
 
 | Feature | Impact for the Child | Impact for the Caregiver |
 | ----- | ----- | ----- |
-| **Room-Aware Scaffolding** | Receives step-by-step instructions relevant to their goal and location (e.g., "pick up your toothbrush" when in the bathroom). | Reduced need for physical supervision and repetitive verbal commands. |
+| **Room-Aware Scaffolding** | Receives step-by-step instructions relevant to their goal and location (e.g., "pick up your toothbrush" when in the bathroom), with prompting direction adapted to each routine. | Reduced need for physical supervision and repetitive verbal commands. |
+| **Adaptive Prompting** | Prompts are structured in a consistent direction (least-to-most for established routines, most-to-least for new ones) rather than random escalation, matched to the child's specific executive function sub-domain bottlenecks (working memory, cognitive flexibility, inhibitory control). | Per-routine prompt hierarchy configuration in the app. System alerts when the child may be developing prompt dependency. |
 | **Biometric Meltdown Intercept** | Receives calming haptic or audio cues when heart rate or pacing indicates rising distress. | Early warning alerts via mobile app before a full meltdown occurs. |
-| **Micro-Affirmations** | Constant positive reinforcement for small successes, improving self-esteem. | Shifts the household dynamic from constant correction to positive reinforcement. |
-| **Intercom System Co-Regulation Tool** | Parental instructions are integrated seamlessly into the familiar AI voice and guidance. | Ability to provide "remote coaching" or arbitrary notifications without physically interrupting the child's focus. |
+| **Strategic Reinforcement** | Brief positive reinforcement delivered at the right frequency — continuous for new routines, variable or chain-end for mastered ones — preventing reinforcement from becoming background noise. Affirmation language is varied from a library, not repeated identically. | Per-routine reinforcement schedule configuration (every step, variable, end-only, or none). System suggests fading reinforcement density as the child masters routines. |
+| **Intercom System** | Parental instructions are integrated seamlessly into the familiar AI voice and guidance. | Ability to provide "remote coaching" or arbitrary notifications without physically interrupting the child's focus. |
 
 ### 
 

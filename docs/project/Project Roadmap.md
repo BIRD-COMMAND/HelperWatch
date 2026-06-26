@@ -59,7 +59,7 @@ With the vertical slices validated, build out the full product feature set. Phas
 
 Build the profile infrastructure that personalizes the system for each child.
 
-- **Profile data model:** Implement the child profile specification — communication, sensory, executive function, emotional regulation, behavioral, and interaction preference sections.
+- **Profile data model:** Implement the child profile specification — communication, sensory, executive function (decomposed into working memory, cognitive flexibility/set-shifting, and inhibitory control sub-domains), emotional regulation, behavioral, and interaction preference sections.
 - **Template profiles:** Pre-built starting configurations for common presentations (non-verbal/severe executive dysfunction, verbal/impulsive/attention-seeking, verbal/anxious/perseverative, limited verbal/sensory-sensitive).
 - **Progressive complexity:** Day-one minimum viable profile (name, communication mode, working memory, one routine) with guided expansion over time.
 - **Profile management UI:** Caregiver mobile app screens for creating, editing, and managing child profiles.
@@ -72,6 +72,8 @@ Build the context-aware decision system that selects appropriate responses.
 - **Context evaluation model:** Current state assessment (real-time biometric + behavioral composite), day quality score (rolling daily accumulator), and recent event buffer (short-term memory with time decay).
 - **Protocol categories:** Echolalia response, perseveration response, attention/engagement, transition, task re-engagement, routine scaffolding, meltdown arc (build-up/peak/recovery), sensory overload, conflict, and bedtime protocols.
 - **Protocol priority and conflict resolution:** 9-level priority hierarchy with suspension/resumption logic.
+- **Prompt hierarchy engine:** Least-to-most and most-to-least prompt direction per-routine, with prompt dependency detection and caregiver alerts.
+- **Reinforcement schedule engine:** Continuous, variable ratio, chain-end, and minimal reinforcement per-routine, with affirmation variety and density fading suggestions.
 - **Protocol templates:** Pre-built protocol sets that caregivers can customize.
 
 #### 3C: Behavioral Response Capabilities
@@ -106,7 +108,10 @@ Expand the mobile app to support the full profile and protocol system.
 #### 3E: Infrastructure
 
 - **Routine engine:** Full routine/schedule management, step-by-step checklists, per-step expected durations, dynamic fading with per-step mastery tracking.
-- **Micro-affirmation library:** Varied positive reinforcement cues (not identical each time).
+- **Prompt hierarchy management:** Per-routine prompt direction storage and state tracking (current prompt level, fading progress for MTL routines).
+- **Reinforcement schedule management:** Per-routine reinforcement schedule storage, affirmation library with variety tracking, density fading progression (CRF → VR → chain-end/minimal).
+- **Prompt dependency detection:** Statistical tracking of which prompt level the child responds at; caregiver alert generation when dependency patterns are detected.
+- **Micro-affirmation library:** Varied positive reinforcement cues (not identical each time), matched to reinforcement schedule.
 - **ESP32 OTA updates:** Firmware update mechanism via Cloud Backend.
 - **Time awareness cues:** Configurable time-context prompts during routines.
 

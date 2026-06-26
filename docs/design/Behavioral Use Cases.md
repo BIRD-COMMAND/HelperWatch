@@ -106,7 +106,7 @@ This is the use case that demands the most from the system and raises the most s
 
 **The scenario.** The child is playing with blocks. It is time to eat dinner. The caregiver announces the transition. The child does not transition. The caregiver announces again. And again. The child melts down, or digs in, or runs to another room. What should be a 30-second shift in activity becomes a 20-minute confrontation.
 
-**Why it happens.** Transitions require multiple simultaneous executive functions: disengaging from a current activity (inhibition), holding the new activity in mind (working memory), initiating a new sequence of actions (task initiation), and tolerating the emotional discomfort of leaving something preferred for something less preferred (emotional regulation). For children with severe executive dysfunction, each of these is independently difficult. Together, they are often overwhelming.
+**Why it happens.** Transitions require multiple executive function sub-domains simultaneously: disengaging from the current activity (inhibitory control), holding the new activity in mind (working memory), cognitively shifting to a new task context (cognitive flexibility / set-shifting), initiating a new sequence of actions (task initiation, partially an inhibition issue), and tolerating the emotional discomfort of leaving something preferred for something less preferred (emotional regulation). For children with severe executive dysfunction, each of these is independently difficult — and the system must know *which* sub-domain is the primary bottleneck for a given child, because the scaffolding strategies differ. A child whose transitions fail because of poor set-shifting needs extended antecedent warnings and cognitive bridges; a child whose transitions fail because of poor inhibitory control needs help suppressing the current engagement. See: [Adaptive Response Architecture — Executive Function Profile](Adaptive%20Response%20Architecture.md).
 
 **Current caregiver burden.** Caregivers report that transitions are the single highest-friction point of the day. The unpredictability of which transitions will be easy and which will trigger a meltdown makes planning nearly impossible. Caregivers compensate by providing extensive warnings, using timers, offering bribes, or simply avoiding transitions altogether — all of which have diminishing returns.
 
@@ -133,7 +133,7 @@ This is the use case that demands the most from the system and raises the most s
 
 **The scenario.** The child is halfway through brushing their teeth. They put the toothbrush down, walk out of the bathroom, and go to the living room. They are now standing in the living room doing nothing in particular, or they have picked up a toy. The tooth-brushing routine is suspended mid-step.
 
-**Why it happens.** Task abandonment is a hallmark of severe executive dysfunction. The child's working memory may have simply dropped the task — they are not refusing, they have genuinely lost the thread. Alternatively, they may have been pulled away by a sensory stimulus (a sound, a visual), or they may have reached a step in the routine that they find aversive and disengaged to avoid it.
+**Why it happens.** Task abandonment can be driven by different executive function sub-domains, and the distinction matters for how the system responds. A child whose working memory has dropped the task — they genuinely forgot what they were doing — needs spatial re-anchoring: *"Your toothbrush is right there."* A child who was pulled away by a competing stimulus — a sound, a visual, a sibling — has an inhibitory control deficit and needs distractor management: redirect away from the competing interest. A child who reached an aversive step and disengaged is exhibiting avoidance behavior (a behavioral profile issue, not strictly an EF issue). The system uses the child's executive function sub-domain profile and behavioral profile to select the appropriate re-engagement strategy. See: [Adaptive Response Architecture — Executive Function Profile](Adaptive%20Response%20Architecture.md).
 
 **Current caregiver burden.** The caregiver must physically track the child, redirect them back to the task, and re-establish context ("you were brushing your teeth, remember?"). This happens dozens of times per day across multiple routines. It is one of the primary reasons caregivers describe themselves as "human GPS units."
 
@@ -159,7 +159,7 @@ This is the use case that demands the most from the system and raises the most s
 
 **The scenario.** The child needs to wake up, get out of bed, use the toilet, brush teeth, get dressed, eat breakfast, and get to the door with shoes and backpack. Each of these is a multi-step task. The entire sequence takes 20 minutes for a neurotypical child. It takes 60–90 minutes for this child, with continuous verbal prompting at every step.
 
-**Why it happens.** The morning routine is the canonical executive function challenge: a long, multi-step sequence performed under time pressure, with low intrinsic motivation (the child does not want to go to school), and high caregiver stress (the bus is coming). Every sub-skill that executive dysfunction impairs — task initiation, sequencing, working memory, time awareness, emotional regulation — is exercised simultaneously.
+**Why it happens.** The morning routine is the canonical executive function challenge: a long, multi-step sequence performed under time pressure, with low intrinsic motivation (the child does not want to go to school), and high caregiver stress (the bus is coming). Every executive function sub-domain is exercised simultaneously — working memory (holding the sequence), cognitive flexibility (shifting between sub-tasks like teeth → clothes → breakfast), inhibitory control (resisting distractions, initiating non-preferred steps), and emotional regulation (tolerating time pressure and leaving the house). The system's effectiveness here depends on knowing which sub-domains are the child's primary bottlenecks. See: [Adaptive Response Architecture — Executive Function Profile](Adaptive%20Response%20Architecture.md).
 
 **Current caregiver burden.** This is the use case that most caregivers describe first when explaining why they need help. The morning routine sets the emotional tone for the entire day. A failed morning means a dysregulated child at school, a frustrated caregiver at work, and a household already in deficit before 8 AM.
 
@@ -168,8 +168,8 @@ This is the use case that demands the most from the system and raises the most s
 This is the "canonical" prompting loop — the use case the system architecture was originally designed around.
 
 - **Room-aware step advancement.** The routine engine tracks which room the child is in and which step is active. When the child enters the bathroom, the system begins the hygiene sub-routine. When they enter the bedroom, it shifts to dressing.
-- **Step-by-step prompting.** Each step is delivered individually: *"First, pick up your toothbrush."* The system waits for completion signals (time elapsed, child's verbal confirmation, or room transition) before advancing.
-- **Micro-affirmations.** After each completed step: *"Nice job! Teeth are done. Now let's get dressed."* These are brief, warm, and consistent — not overwrought.
+- **Step-by-step prompting.** Each step is delivered individually: *"First, pick up your toothbrush."* The system waits for completion signals (time elapsed, child's verbal confirmation, or room transition) before advancing. The prompting direction — least-to-most (start gentle, escalate if needed) or most-to-least (start with full instruction, fade over days) — is configured per-routine. See: [Adaptive Response Architecture — Prompt Hierarchy Model](Adaptive%20Response%20Architecture.md).
+- **Micro-affirmations.** After completed steps, brief positive reinforcement matched to the child's profile and the routine's reinforcement schedule — not necessarily after every step. Continuous reinforcement ("Nice job!" after each step) is appropriate for new routines, but established routines should use variable ratio or chain-end reinforcement to prevent satiation. See: [Adaptive Response Architecture — Reinforcement Schedule Model](Adaptive%20Response%20Architecture.md).
 - **Time awareness cues.** At configurable intervals, the system provides gentle time context: *"You're doing great. The bus comes in 20 minutes."*
 - **Dynamic fading.** As the child demonstrates mastery of specific steps (completes them independently within the expected time window over multiple days), the system reduces prompting for those steps. A child who has mastered tooth-brushing stops receiving step-by-step dental prompts and instead gets: *"Go ahead and brush your teeth — I know you've got this."*
 - **Stuck detection.** If a step has been active for longer than its expected duration, the system re-prompts or simplifies: *"You've been in the bathroom for a bit. Need help with anything? Your next step is to pick up your toothbrush."*
@@ -177,10 +177,13 @@ This is the "canonical" prompting loop — the use case the system architecture 
 **Feature requirements:**
 - Multi-step routine definition with per-step expected duration
 - Room-aware step advancement and sub-routine activation
+- Prompt hierarchy direction (least-to-most or most-to-least), configurable per-routine
+- Reinforcement schedule (continuous, variable ratio, chain-end, or minimal), configurable per-routine
 - Micro-affirmation cue library (varied, not identical each time)
 - Configurable time awareness cues
 - Dynamic fading engine with per-step mastery tracking
-- Stuck/timeout detection with re-prompt or simplification
+- Stuck/timeout detection with sub-domain-appropriate re-prompt strategy
+- Prompt dependency detection (child consistently waits for most intrusive prompt)
 
 ---
 
@@ -395,9 +398,12 @@ The following table maps each user story to the system features it requires. Fea
 | Bedtime request classification and rules | US-10 | **New** |
 | Graduated response firmness | US-10 | **New** |
 | Companion / ambient presence mode | US-10 | **New** |
+| Prompt hierarchy direction (LTM / MTL per-routine) | US-6 | **New** |
+| Reinforcement schedule (CRF / VR / chain-end / minimal per-routine) | US-6 | **New** |
+| Prompt dependency detection | US-6 | **New** |
 | Caregiver check-in prompts ("engage your child") | Ethics | **New** |
 
-**Summary:** Of the 37 distinct features identified, **6** are already in the existing documentation or roadmap, **5** are partially covered, and **26** are new requirements surfaced by these behavioral use cases.
+**Summary:** Of the 40 distinct features identified, **6** are already in the existing documentation or roadmap, **5** are partially covered, and **29** are new requirements surfaced by these behavioral use cases.
 
 ---
 

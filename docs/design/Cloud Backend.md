@@ -57,9 +57,12 @@ The LLM is strictly used as a **classifier and router**, not a creative writer:
 2. The LLM selects the most appropriate response from the caregiver's pre-written script or fits parameters into highly constrained templates.
 3. This deterministic routing prevents hallucinations or inappropriate instructions while remaining highly responsive.
 
-### Routine Engine and Dynamic Fading
-- Storing caregiver-configured schedules and step-by-step routine checklists.
+### Routine Engine, Prompt Hierarchy, and Reinforcement
+- Storing caregiver-configured schedules, step-by-step routine checklists, and per-routine settings (prompt hierarchy direction, reinforcement schedule).
+- **Prompt Hierarchy Management:** Each routine is configured with a prompting direction — least-to-most (escalate intrusiveness only if the child does not respond) or most-to-least (start with full support, fade over days). The engine moves through prompts in the configured direction and tracks prompt dependency signals. See: [Adaptive Response Architecture — Prompt Hierarchy Model](Adaptive%20Response%20Architecture.md).
+- **Reinforcement Schedule Selection:** Per-routine reinforcement schedules (continuous, variable ratio, chain-end, or minimal) control how frequently micro-affirmations are delivered. The engine varies affirmation language from a library and suggests fading reinforcement density as the child demonstrates mastery. See: [Adaptive Response Architecture — Reinforcement Schedule Model](Adaptive%20Response%20Architecture.md).
 - **Dynamic Fading:** The engine logs task completion rates and automatically decreases prompt frequency as the child shows mastery, prompting only when delays or distress are detected.
+- **Sub-Domain-Aware Strategies:** The response protocol engine reads the child's executive function sub-domain profile (working memory, cognitive flexibility, inhibitory control) to select scaffolding strategies matched to the child's specific bottlenecks. See: [Adaptive Response Architecture — Executive Function Profile](Adaptive%20Response%20Architecture.md).
 
 ### Real-Time Alerts
 - Monitors heart rate spikes and pacing patterns (accelerometer).

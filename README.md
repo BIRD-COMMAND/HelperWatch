@@ -35,7 +35,7 @@ HelperWatch is currently in **Phase 0 (Foundation & Documentation)** of developm
 - **Phase 0: Foundation & Documentation (Active):** Defining core mission, licensing, architectural standards, and establishing the public repository guidelines.
 - **Phase 1: Vertical Slice — Room Detection:** Developing ESP32 scanning firmware, Cloud RSSI endpoint, and a minimal mobile UI to verify >90% room-level accuracy with sub-3 second transitions.
 - **Phase 2: Vertical Slice — Prompting Loop:** Building the WearOS background service (BLE advertising, audio streaming, biometric telemetry), Cloud STT integration (Whisper via Groq), LLM classifier/router, and watch cue playback. Target battery life: 12–16+ hours.
-- **Phase 3: Core Product Build-Out:** Routine engine, dynamic fading, meltdown intercept, full caregiver mobile app (macros, trend reports, intercom), push notifications, and ESP32 OTA updates.
+- **Phase 3: Core Product Build-Out:** Child profile system (with executive function sub-domain profiling), response protocol engine, prompt hierarchy engine (least-to-most / most-to-least per-routine), reinforcement schedule engine (continuous, variable, chain-end, minimal), dynamic fading, meltdown intercept, full caregiver mobile app (macros, trend reports, intercom), push notifications, and ESP32 OTA updates.
 - **Phase 4: Hardening & Launch:** Security audit, load testing, multi-home testing, documentation finalization, and community launch.
 
 ---
