@@ -483,7 +483,7 @@ In the early stages of the project, the realistic setup process is a guided cons
 
 Over time, as the system matures:
 - The app itself can guide the setup process with structured questions and suggestions.
-- Template profiles and protocol sets can reduce the configuration burden.
+- Template profiles and protocol sets can reduce the difficulty of initial configuration.
 - The system can learn from usage patterns and suggest refinements.
 
 But the initial deployment of HelperWatch for a new family should assume that setup is a collaborative, human-guided process — not a solo download-and-go experience.

@@ -101,7 +101,7 @@ See: [Cloud Backend — Deterministic Guardrails](../design/Cloud%20Backend.md)
 - **No "all clear" language.** The app never displays a message like "Your child is fine." It reports observable data (room, activity, heart rate) and leaves interpretation to the parent.
 - **Encouraging direct engagement.** The system can be designed to periodically prompt the caregiver: "It's been a while since you checked in with your child directly."
 
-**Why design-philosophy-only:** This risk is inherent to any assistive technology that reduces the burden on a caregiver. It cannot be coded away. It can only be addressed through honest communication about the system's limitations.
+**Why design-philosophy-only:** This risk is inherent to any assistive technology that reduces the responsibility on a caregiver. It cannot be coded away. It can only be addressed through honest communication about the system's limitations.
 
 ---
 

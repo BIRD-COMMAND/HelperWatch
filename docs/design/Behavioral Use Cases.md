@@ -18,7 +18,7 @@ Each user story in this document describes a real behavioral scenario, explains 
 
 **Why it happens.** Echolalia is not random noise. For many children, it serves communicative functions: self-regulation, processing, assent, protest, or a request that the child cannot yet formulate in original language. A child echoing "time to brush your teeth" may be acknowledging the instruction, or may be using the repetition to process it. A child scripting cartoon dialogue may be self-soothing, or may be attempting to communicate something that maps, in their internal logic, to the quoted scene.
 
-**Current caregiver burden.** The caregiver must constantly distinguish between echolalia-as-acknowledgment and echolalia-as-non-comprehension — and respond differently to each. This is cognitively exhausting, especially when the same phrase is echoed dozens of times per day. Many caregivers default to repeating the instruction louder or more firmly, which often escalates the situation without improving comprehension.
+**Current reality for caregivers.** The caregiver must constantly distinguish between echolalia-as-acknowledgment and echolalia-as-non-comprehension — and respond differently to each. This is cognitively exhausting, especially when the same phrase is echoed dozens of times per day. Many caregivers default to repeating the instruction louder or more firmly, which often escalates the situation without improving comprehension.
 
 **HelperWatch response strategy.**
 
@@ -45,7 +45,7 @@ Each user story in this document describes a real behavioral scenario, explains 
 
 **Why it happens.** Perseverative questioning is rarely about information. It can be driven by anxiety (the answer provides temporary relief, but the relief fades quickly), a need for predictability and control (the ritual of asking and receiving a consistent answer is soothing), difficulty with working memory (the answer genuinely does not stick), or a bid for interaction and connection (the question is a social tool, not an informational one).
 
-**Current caregiver burden.** This is among the most grinding daily experiences for caregivers. The 40th repetition of the same question erodes patience in a way that is difficult to describe to someone who has not lived it. Caregivers oscillate between answering patiently (which can reinforce the loop), refusing to answer (which can trigger escalation), and snapping (which the caregiver then feels guilty about). There is no good option available at repetition number 40.
+**Current reality for caregivers.** This is among the most grinding daily experiences for caregivers. The 40th repetition of the same question erodes patience in a way that is difficult to describe to someone who has not lived it. Caregivers oscillate between answering patiently (which can reinforce the loop), refusing to answer (which can trigger escalation), and snapping (which the caregiver then feels guilty about). There is no good option available at repetition number 40.
 
 **HelperWatch response strategy.**
 
@@ -80,7 +80,7 @@ The system should implement a **graduated response strategy** with caregiver-con
 
 **Why it happens.** For many children in the target population, the drive for human connection and validation is intact even when the social skills to obtain it appropriately are not. The child cannot say "I feel invisible and I need someone to notice me." They can throw a cup across the kitchen. The cup always works.
 
-**Current caregiver burden.** The caregiver is trapped in a reinforcement loop they understand intellectually but cannot escape practically. Ignoring the behavior (extinction) is the textbook recommendation, but it is nearly impossible to execute when the child is destroying property, hitting siblings, or putting themselves in danger. And extinction bursts — where the behavior intensifies before it improves — can last weeks, during which the household is in crisis.
+**Current reality for caregivers.** The caregiver is trapped in a reinforcement loop they understand intellectually but cannot escape practically. Ignoring the behavior (extinction) is the textbook recommendation, but it is nearly impossible to execute when the child is destroying property, hitting siblings, or putting themselves in danger. And extinction bursts — where the behavior intensifies before it improves — can last weeks, during which the household is in crisis.
 
 **HelperWatch response strategy.**
 
@@ -108,7 +108,7 @@ This is the use case that demands the most from the system and raises the most s
 
 **Why it happens.** Transitions require multiple executive function sub-domains simultaneously: disengaging from the current activity (inhibitory control), holding the new activity in mind (working memory), cognitively shifting to a new task context (cognitive flexibility / set-shifting), initiating a new sequence of actions (task initiation, partially an inhibition issue), and tolerating the emotional discomfort of leaving something preferred for something less preferred (emotional regulation). For children with severe executive dysfunction, each of these is independently difficult — and the system must know *which* sub-domain is the primary bottleneck for a given child, because the scaffolding strategies differ. A child whose transitions fail because of poor set-shifting needs extended antecedent warnings and cognitive bridges; a child whose transitions fail because of poor inhibitory control needs help suppressing the current engagement. See: [Adaptive Response Architecture — Executive Function Profile](Adaptive%20Response%20Architecture.md).
 
-**Current caregiver burden.** Caregivers report that transitions are the single highest-friction point of the day. The unpredictability of which transitions will be easy and which will trigger a meltdown makes planning nearly impossible. Caregivers compensate by providing extensive warnings, using timers, offering bribes, or simply avoiding transitions altogether — all of which have diminishing returns.
+**Current reality for caregivers.** Caregivers report that transitions are the single highest-friction point of the day. The unpredictability of which transitions will be easy and which will trigger a meltdown makes planning nearly impossible. Caregivers compensate by providing extensive warnings, using timers, offering bribes, or simply avoiding transitions altogether — all of which have diminishing returns.
 
 **HelperWatch response strategy.**
 
@@ -135,7 +135,7 @@ This is the use case that demands the most from the system and raises the most s
 
 **Why it happens.** Task abandonment can be driven by different executive function sub-domains, and the distinction matters for how the system responds. A child whose working memory has dropped the task — they genuinely forgot what they were doing — needs spatial re-anchoring: *"Your toothbrush is right there."* A child who was pulled away by a competing stimulus — a sound, a visual, a sibling — has an inhibitory control deficit and needs distractor management: redirect away from the competing interest. A child who reached an aversive step and disengaged is exhibiting avoidance behavior (a behavioral profile issue, not strictly an EF issue). The system uses the child's executive function sub-domain profile and behavioral profile to select the appropriate re-engagement strategy. See: [Adaptive Response Architecture — Executive Function Profile](Adaptive%20Response%20Architecture.md).
 
-**Current caregiver burden.** The caregiver must physically track the child, redirect them back to the task, and re-establish context ("you were brushing your teeth, remember?"). This happens dozens of times per day across multiple routines. It is one of the primary reasons caregivers describe themselves as "human GPS units."
+**Current reality for caregivers.** The caregiver must physically track the child, redirect them back to the task, and re-establish context ("you were brushing your teeth, remember?"). This happens dozens of times per day across multiple routines. It is one of the primary reasons caregivers describe themselves as "human GPS units."
 
 **HelperWatch response strategy.**
 
@@ -161,7 +161,7 @@ This is the use case that demands the most from the system and raises the most s
 
 **Why it happens.** The morning routine is the canonical executive function challenge: a long, multi-step sequence performed under time pressure, with low intrinsic motivation (the child does not want to go to school), and high caregiver stress (the bus is coming). Every executive function sub-domain is exercised simultaneously — working memory (holding the sequence), cognitive flexibility (shifting between sub-tasks like teeth → clothes → breakfast), inhibitory control (resisting distractions, initiating non-preferred steps), and emotional regulation (tolerating time pressure and leaving the house). The system's effectiveness here depends on knowing which sub-domains are the child's primary bottlenecks. See: [Adaptive Response Architecture — Executive Function Profile](Adaptive%20Response%20Architecture.md).
 
-**Current caregiver burden.** This is the use case that most caregivers describe first when explaining why they need help. The morning routine sets the emotional tone for the entire day. A failed morning means a dysregulated child at school, a frustrated caregiver at work, and a household already in deficit before 8 AM.
+**Current reality for caregivers.** This is the use case that most caregivers describe first when explaining why they need help. The morning routine sets the emotional tone for the entire day. A failed morning means a dysregulated child at school, a frustrated caregiver at work, and a household already in deficit before 8 AM.
 
 **HelperWatch response strategy.**
 
@@ -197,7 +197,7 @@ This is the "canonical" prompting loop — the use case the system architecture 
 
 **The recovery.** The storm passes. The child is exhausted, often embarrassed or confused. They may be non-verbal. They may seek comfort. They may need 20 minutes of silence. They may need to hear that they are not in trouble.
 
-**Current caregiver burden.** Caregivers learn to read the build-up signs — but only after years of pattern recognition, and even then, they catch it too late roughly half the time. During the peak, caregivers are in crisis management mode: ensuring physical safety, protecting siblings, absorbing the emotional blast. During recovery, they are often too drained to provide the calm, validating re-engagement that the child needs.
+**Current reality for caregivers.** Caregivers learn to read the build-up signs — but only after years of pattern recognition, and even then, they catch it too late roughly half the time. During the peak, caregivers are in crisis management mode: ensuring physical safety, protecting siblings, absorbing the emotional blast. During recovery, they are often too drained to provide the calm, validating re-engagement that the child needs.
 
 **HelperWatch response strategy.**
 
@@ -234,7 +234,7 @@ This is the "canonical" prompting loop — the use case the system architecture 
 
 **Why it happens.** Many children in the target population have atypical sensory processing. Stimuli that are background noise to a neurotypical person (the hum of a refrigerator, the texture of a shirt tag, a sibling laughing) can be experienced as physically painful or overwhelmingly intense. Shutdown is a protective response — the brain reducing input by reducing output.
 
-**Current caregiver burden.** A child in shutdown looks "fine" to an uninformed observer — they are quiet and still. But they are unreachable, and any attempt to prompt, redirect, or engage them can deepen the shutdown or trigger a meltdown. Caregivers must learn to recognize the difference between a calm child and a shut-down child, and must resist the urge to "help" when helping will make things worse.
+**Current reality for caregivers.** A child in shutdown looks "fine" to an uninformed observer — they are quiet and still. But they are unreachable, and any attempt to prompt, redirect, or engage them can deepen the shutdown or trigger a meltdown. Caregivers must learn to recognize the difference between a calm child and a shut-down child, and must resist the urge to "help" when helping will make things worse.
 
 **HelperWatch response strategy.**
 
@@ -264,7 +264,7 @@ This is the "canonical" prompting loop — the use case the system architecture 
 
 **Why it matters.** HelperWatch is designed to serve a child in a household, not a child in isolation. Sibling dynamics, ambient noise, and multi-person conflict are daily realities, and the system must handle them without making things worse.
 
-**Current caregiver burden.** When the caregiver is not in the room, they have no visibility into what is happening until the screaming reaches them. They arrive to a conflict already in progress, with no context for who started what. The target child may be the aggressor, the victim, or an overwhelmed bystander — and the caregiver must assess the situation in real-time with incomplete, emotionally charged information from multiple children.
+**Current reality for caregivers.** When the caregiver is not in the room, they have no visibility into what is happening until the screaming reaches them. They arrive to a conflict already in progress, with no context for who started what. The target child may be the aggressor, the victim, or an overwhelmed bystander — and the caregiver must assess the situation in real-time with incomplete, emotionally charged information from multiple children.
 
 **HelperWatch response strategy.**
 
@@ -289,7 +289,7 @@ This is the "canonical" prompting loop — the use case the system architecture 
 
 **Why it happens.** Bedtime combines several of the hardest challenges for the target population: a forced transition (from preferred activity to non-preferred), separation anxiety (from the caregiver and from stimulation), sensory processing differences (the bedroom may feel too quiet, too dark, or too still), and executive dysfunction (the inability to self-initiate the wind-down process).
 
-**Current caregiver burden.** By bedtime, the caregiver has been "on" for 14+ hours. Their capacity for patience is at its lowest precisely when the child's demands are at their highest. Bedtime resistance is one of the most commonly cited sources of caregiver burnout and marital stress in special needs families.
+**Current reality for caregivers.** By bedtime, the caregiver has been "on" for 14+ hours. Their capacity for patience is at its lowest precisely when the child's demands are at their highest. Bedtime resistance is one of the most commonly cited sources of caregiver burnout and marital stress in special needs families.
 
 **HelperWatch response strategy.**
 
