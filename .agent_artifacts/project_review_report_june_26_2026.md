@@ -114,7 +114,7 @@ To improve the feasibility and speed up the implementation of HelperWatch, the f
 ### 1. Simplify the Positioning Architecture (Local Gateway)
 Instead of streaming continuous RSSI values from 4–6 ESP32s directly to the cloud, introduce a local coordinator:
 * **The Caregiver's Phone as Local Gateway:** Since the caregiver app runs React Native, if the caregiver is nearby, the phone can scan for the watch BLE advertisement directly.
-* **ESP32 to Local Hub:** ESP32 nodes could report RSSI to a single local broker (like an inexpensive Raspberry Pi or a Home Assistant green box) which resolves the room locally and sends only *state transitions* (e.g., "Leo moved to Bathroom") to the Cloud Backend. This reduces network chatter by 99% and ensures the system works even if external internet drops.
+* **ESP32 to Local Hub:** ESP32 nodes could report RSSI to a single local broker (like an inexpensive Raspberry Pi or a Home Assistant green box) which resolves the room locally and sends only *state transitions* (e.g., "John moved to Bathroom") to the Cloud Backend. This reduces network chatter by 99% and ensures the system works even if external internet drops.
 
 ### 2. Move to a Hybrid Watch Stack
 * To solve the WearOS battery crisis, implement **Local voice activity detection (VAD)** on the watch. The microphone and Wi-Fi should remain completely powered down unless a simple haptic check-in is running, or the child presses a physical button on the watch, or local low-power VAD registers speech.

@@ -140,7 +140,7 @@ Sent by each ESP32 node to report signal strength from the watch.
 Sent by the smartwatch to report biometrics, accelerometer states, and on-watch transcriptions.
 ```json
 {
-  "device_id": "watch_leo_01",
+  "device_id": "watch_user_01",
   "transcript": "i am brushing my teeth",
   "heart_rate": 82,
   "motion": "still",
@@ -153,7 +153,7 @@ Sent when the parent uses Push-to-Talk to inject a command into the next cue.
 ```json
 {
   "account_id": "user_parent_abc",
-  "injected_text": "Tell Leo it's almost time for dinner and to put his blocks away."
+  "injected_text": "Tell John it's almost time for dinner and to put his blocks away."
 }
 ```
 

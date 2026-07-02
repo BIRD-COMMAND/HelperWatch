@@ -54,7 +54,7 @@ Required for the smartwatch, smartphone, and ESP32 scanner nodes to connect to t
 ### Step 3: Register and Calibrate Rooms
 
 1. Open the caregiver mobile app on your smartphone.
-2. In settings, you will see a list of paired scanner nodes. Assign a friendly room name to each node (e.g., "Kitchen", "Bathroom", "Leo's Bedroom").
+2. In settings, you will see a list of paired scanner nodes. Assign a friendly room name to each node (e.g., "Kitchen", "Bathroom", "John's Bedroom").
 3. Walk to each room with the child's smartwatch, open the calibration screen, and tap **"Calibrate [Room Name]"** while standing in that room. The system will record baseline BLE signals.
 
 ### Step 4: Pair the Smartwatch

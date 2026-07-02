@@ -34,7 +34,7 @@ The comments confirm a strategic consensus: **A dedicated Local Hub is now a cor
 
 ### Positioning Resolution
 * **Previous Design:** 4–6 ESP32s streamed raw RSSI packet logs across the WAN to the Cloud Backend multiple times per second.
-* **Revised Design:** ESP32 nodes report BLE RSSI to the **Local Hub** over local Wi-Fi/UDP. The Local Hub acts as the local position resolver. It processes high-frequency signals locally, determines room transitions, and sends only the *state transitions* (e.g., `"Leo moved to Bathroom"`) as discrete data points to the cloud or local logging feed.
+* **Revised Design:** ESP32 nodes report BLE RSSI to the **Local Hub** over local Wi-Fi/UDP. The Local Hub acts as the local position resolver. It processes high-frequency signals locally, determines room transitions, and sends only the *state transitions* (e.g., `"John moved to Bathroom"`) as discrete data points to the cloud or local logging feed.
 * **Feasibility Impact:** Eliminates WAN network chatter by >99%, reduces cloud hosting bandwidth costs, and guarantees that room-level tracking operates during internet outages.
 
 ### Audio & Latency Management

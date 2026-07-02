@@ -22,7 +22,7 @@ When a parent opens the app, they should know within one second whether things a
   - Green ring: routine in progress, heart rate stable.
   - Pulsing yellow ring: stuck on a task step for more than a configurable duration.
   - Red ring: biometric spike or possible distress.
-- **Contextual Presence** — Current room and active task displayed clearly: *"Leo is in the Bedroom (Brushing Teeth)."*
+- **Contextual Presence** — Current room and active task displayed clearly: *"John is in the Bedroom (Brushing Teeth)."*
 - **Live Subtitle Feed** — A small, real-time text stream showing what the AI last said or is currently doing: *"AI: 'Great job, now grab your shoes.'"* This lets the parent monitor contextually without physically interrupting the child.
 
 ### Push-to-Talk Intercom Mode
@@ -31,9 +31,9 @@ The most powerful tool for real-time caregiver intervention.
 
 **How it works:**
 
-1. The parent holds a prominent button and speaks a command: *"Tell Leo it's almost dinner time and he needs to pick up his blocks."*
+1. The parent holds a prominent button and speaks a command: *"Tell John it's almost dinner time and he needs to pick up his blocks."*
 2. The app sends this text injection to the Cloud Backend.
-3. The AI integrates the parent's command into its next verbal cue on the watch: *"Hey Leo, your dad says it's almost dinner time! Let's put away the blocks first."*
+3. The AI integrates the parent's command into its next verbal cue on the watch: *"Hey John, your dad says it's almost dinner time! Let's put away the blocks first."*
 
 The cue still comes from the familiar, patient AI voice — preventing the jarring shift of a direct walkie-talkie blast — while giving the parent absolute control. This preserves the child's focus and routine flow.
 
